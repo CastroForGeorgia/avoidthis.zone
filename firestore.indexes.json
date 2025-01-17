@@ -1,4 +1,67 @@
 {
-  "indexes": [],
+  "indexes": [
+    {
+      "collectionGroup": "raidReports",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "g.geohash",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "dateOfRaid",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "tacticsUsed",
+          "arrayConfig": "CONTAINS"
+        },
+        {
+          "fieldPath": "raidLocationCategory",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "detailLocation",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "wasSuccessful",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "numberOfPeopleDetained",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "locationReference",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "sourceOfInfo",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "upvoteCount",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "downvoteCount",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "flagCount",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "updatedAt",
+          "order": "ASCENDING"
+        }
+      ]
+    }
+  ],
   "fieldOverrides": []
 }
