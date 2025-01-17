@@ -1,0 +1,25 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // For the 'raidReports' collection
+    match /raidReports/{docId} {
+
+      // Allow everyone to read documents (you can tighten this if you want)
+      allow read: if request.auth != null;
+
+      // Prevent all direct writes from clients (create, update, delete).
+      // Your Cloud Functions (Admin SDK) will bypass these rules automatically.
+      allow write: if false;
+    }
+
+    // If you have subcollections, define their rules too, e.g. for 'votes'
+    match /raidReports/{docId}/votes/{voteId} {
+      // e.g., You might allow read, or also block writes if you only do it via functions.
+      allow read: if request.auth != null;
+      // Possibly also disallow writes from clients:
+      allow write: if false;
+    }
+  }
+}

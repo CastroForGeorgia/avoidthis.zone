@@ -1,0 +1,17 @@
+{
+  "hosting": {
+    "site": "avoidthiszone-16968",
+    "public": "./avoid-this-zone-app/dist",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
