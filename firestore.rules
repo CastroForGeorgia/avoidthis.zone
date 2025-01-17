@@ -21,5 +21,12 @@ service cloud.firestore {
       // Possibly also disallow writes from clients:
       allow write: if false;
     }
+
+    match /config/{docId} {
+      // Anyone can read enumerations
+      allow read: if true;
+      // No direct writes from clients
+      allow write: if false;
+    }
   }
 }
