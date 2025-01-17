@@ -1,25 +1,4 @@
 export default {
-  de: {
-    translation: {
-      Index: {
-        applicationLoadErrorMessage: 'Fehler beim Laden der Applikation',
-        applicationLoadErrorDescription: 'Die Applikation mit der ID {{applicationId}} konnte nicht geladen werden. ' +
-          'Die Standardkonfiguration wird stattdessen geladen.',
-        errorMessage: 'Fehler beim Laden der Applikation',
-        errorDescription: 'Aufgrund eines unerwarteten Fehlers konnte die Applikation nicht geladen werden. ' +
-          'Bitte laden Sie die Seite erneut.'
-      },
-      BasicNominatimSearch: {
-        placeholder: 'Ortsname, Straßenname, Stadtteilname, POI usw.'
-      },
-      SideDrawer: {
-        title: 'Themen'
-      },
-      ToggleDrawerButton: {
-        tooltip: 'Themen ein-/ausblenden'
-      }
-    }
-  },
   en: {
     translation: {
       Index: {
@@ -33,10 +12,30 @@ export default {
         placeholder: 'Place name, street name, district name, POI, etc.'
       },
       SideDrawer: {
-        title: 'Layers'
+        title: 'Filters'
       },
       ToggleDrawerButton: {
-        tooltip: 'Show/hide layers'
+        tooltip: 'Show/hide Filters'
+      }
+    }
+  },
+  es: {
+    translation: {
+      Index: {
+        applicationLoadErrorMessage: 'Error al cargar la aplicación',
+        applicationLoadErrorDescription: 'La aplicación con el ID {{applicationId}} no se pudo cargar correctamente. ' +
+          'Está viendo la configuración predeterminada de la aplicación.',
+        errorMessage: 'Error al cargar la aplicación',
+        errorDescription: 'Ocurrió un error inesperado al cargar la aplicación. Por favor, intente recargar la página.'
+      },
+      BasicNominatimSearch: {
+        placeholder: 'Nombre del lugar, nombre de la calle, nombre del distrito, punto de interés, etc.'
+      },
+      SideDrawer: {
+        title: 'Filtros'
+      },
+      ToggleDrawerButton: {
+        tooltip: 'Mostrar/ocultar filtros'
       }
     }
   }

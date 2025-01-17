@@ -1,27 +1,37 @@
+@import './variables.less'; // Ensure the color scheme is imported if defined in another file
+
 .App,
 #map {
   margin: 0;
   padding: 0;
   height: 100%;
   width: 100%;
+  background-color: var(--background-color); // Use background color variable
+  color: var(--text-color); // Use text color variable
 }
 
 .App {
   .map-controls {
     display: flex;
-    transition: all 0.3s;
+    transition: all 0.3s ease-in-out;
     width: 600px;
     position: fixed;
     top: 30px;
     right: 30px;
+    background-color: var(--background-alt-color); // Ensure controls blend with design
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
     &.drawer-open {
-      // 378px (drawer width) + 30px (default position)
-      right: 408px;
+      // Adjusted for drawer's width
+      right: 408px; // 378px drawer width + 30px padding
     }
 
     .react-geo-search {
       padding-right: 10px;
+      background-color: var(--background-alt-color-2); // Separate the search area visually
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
   }
 }
