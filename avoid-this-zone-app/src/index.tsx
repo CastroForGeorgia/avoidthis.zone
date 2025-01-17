@@ -41,7 +41,7 @@ import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
 import GeoJSON from 'ol/format/GeoJSON.js';
 import { Fill, Stroke, Style } from 'ol/style';
-import {Heatmap as HeatmapLayer, Tile as TileLayer} from 'ol/layer.js';
+import { Heatmap as HeatmapLayer, Tile as TileLayer } from 'ol/layer.js';
 import { Feature } from 'ol';
 import { Point } from 'ol/geom';
 
@@ -122,42 +122,42 @@ const setupDefaultMap = async () => {
   const addDynamicFeatures = () => {
     const numFeaturesPerDistrict = 1; // Number of features to add per district
     const districtFeatures = districtSource.getFeatures(); // Get Georgia district features
-  
+
     if (districtFeatures.length === 0) {
       console.warn('District features not yet loaded.');
       return;
     }
-  
+
     districtFeatures.forEach((districtFeature) => {
       const districtGeometry = districtFeature.getGeometry(); // Get the geometry for the district
-    
+
       if (!districtGeometry) {
         console.warn('District feature has no geometry.');
         return;
       }
-    
+
       for (let i = 0; i < numFeaturesPerDistrict; i++) {
         let isValidPoint = false;
         let coordinates: number[]; // Ensure it's always defined
-    
+
         while (!isValidPoint) {
           // Generate a random point within the bounding box of the district
           const extent = districtGeometry.getExtent();
           const lon = extent[0] + Math.random() * (extent[2] - extent[0]); // Random longitude within district bounds
           const lat = extent[1] + Math.random() * (extent[3] - extent[1]); // Random latitude within district bounds
           coordinates = [lon, lat]; // Always assign a value to coordinates
-    
+
           // Check if the point is within the district geometry
           if (districtGeometry.intersectsCoordinate(coordinates)) {
             isValidPoint = true;
           }
         }
-    
+
         const feature = new Feature({
           geometry: new Point(coordinates),
           weight: Math.random() * 9 + 1, // Random weight between 1 and 10
         });
-    
+
         heatmapSource.addFeature(feature);
       }
     });
