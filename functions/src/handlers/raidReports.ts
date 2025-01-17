@@ -16,12 +16,13 @@ import {
   ALLOWED_TACTICS,
   ALLOWED_RAID_LOCATION_CATEGORY,
   ALLOWED_DETAIL_LOCATION,
-  ALLOWED_WAS_ICE_SUCCESSFUL,
+  ALLOWED_WAS_SUCCESSFUL,
   ALLOWED_LOCATION_REFERENCE,
   ALLOWED_SOURCE_OF_INFO,
   CreateRaidReportPayload,
   RaidReportFirestoreData,
 } from "../config/constants";
+import {geohashForLocation} from "geofire-common";
 
 /**
  * createRaidReport:
@@ -36,9 +37,10 @@ Promise<{ id: string }> => {
   logger.info("Received createRaidReport request", {data});
 
   // 1. Validate mandatory fields
-  if (!data.lat || !data.lng || !data.geohash) {
-    throw new HttpsError("invalid-argument", "Missing lat, lng, or geohash.");
+  if (!data.lat || !data.lng) {
+    throw new HttpsError("invalid-argument", "Missing lat, lng.");
   }
+
   if (!data.dateOfRaid) {
     throw new HttpsError("invalid-argument", "Missing dateOfRaid.");
   }
@@ -59,8 +61,8 @@ Promise<{ id: string }> => {
     throw new HttpsError("invalid-argument", "Invalid detailLocation.");
   }
 
-  if (!data.wasICESuccessful ||
-      !ALLOWED_WAS_ICE_SUCCESSFUL.includes(data.wasICESuccessful)) {
+  if (!data.wasSuccessful ||
+      !ALLOWED_WAS_SUCCESSFUL.includes(data.wasSuccessful)) {
     throw new HttpsError("invalid-argument", "Invalid wasICESuccessful.");
   }
 
@@ -87,13 +89,13 @@ Promise<{ id: string }> => {
   const reportData: RaidReportFirestoreData = {
     g: {
       geopoint: new admin.firestore.GeoPoint(data.lat, data.lng),
-      geohash: data.geohash,
+      geohash: geohashForLocation([data.lat, data.lng]),
     },
     dateOfRaid: raidTimestamp,
     tacticsUsed: data.tacticsUsed,
     raidLocationCategory: data.raidLocationCategory,
     detailLocation: data.detailLocation,
-    wasICESuccessful: data.wasICESuccessful,
+    wasSuccessful: data.wasSuccessful,
     numberOfPeopleDetained: data.numberOfPeopleDetained,
     locationReference: data.locationReference,
     sourceOfInfo: data.sourceOfInfo,
