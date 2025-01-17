@@ -1,19 +1,20 @@
 /**
- * Import function triggers from their respective submodules:
+ * index.ts
  *
- * import {onCall} from "firebase-functions/v2/https";
- * import {onDocumentWritten} from "firebase-functions/v2/firestore";
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
+ * Main entry point where we export all of our cloud functions.
+ * Firebase will detect these exports and make them available for deployment.
  */
 
-import {onRequest} from "firebase-functions/v2/https";
-import * as logger from "firebase-functions/logger";
+import {createRaidReport} from "./handlers/raidReports";
+import {voteOnReport} from "./handlers/votes";
 
-// Start writing functions
-// https://firebase.google.com/docs/functions/typescript
+/**
+ * Export each Cloud Function so Firebase can deploy them.
+ * If you only have createRaidReport for now, just export that.
+ */
 
-// export const helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+// Create a new Raid Report
+export {createRaidReport};
+
+// Up/Down Vote on a raid report (optional)
+export {voteOnReport};
