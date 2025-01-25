@@ -158,7 +158,7 @@ const setupDefaultMap = async () => {
           weight: Math.random() * 9 + 1, // Random weight between 1 and 10
         });
 
-        heatmapSource.addFeature(feature);
+        // heatmapSource.addFeature(feature);
       }
     });
   };
@@ -172,19 +172,7 @@ const setupDefaultMap = async () => {
 };
 
 const setupMap = async () => {
-  const applicationId = new URLSearchParams(window.location.search).get('applicationId');
-
-  if (applicationId) {
-    Logger.info(`Loading application with ID ${applicationId}`);
-    return await setupSHOGunMap(parseInt(applicationId, 10));
-  }
-
   Logger.info('No application ID given, loading default map configuration.');
-  return setupDefaultMap();
-};
-
-const setupSHOGunMap = async (applicationId: number) => {
-  Logger.info(`SHOGun map setup is not currently implemented.`);
   return setupDefaultMap();
 };
 
