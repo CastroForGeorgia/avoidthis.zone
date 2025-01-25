@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { MapComponent, MapComponentProps } from '@terrestris/react-geo/dist/Map/MapComponent/MapComponent';
 import { useMap } from '@terrestris/react-util/dist/Hooks/useMap/useMap';
 
 import { useAppSelector } from '../../hooks/useAppSelector';
-import { fetchEnumValues } from '../../firebase';
 import ReportModal from '../modals/ReportModal';
 
 import './index.less';

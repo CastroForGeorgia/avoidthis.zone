@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Checkbox, Drawer, Form, Select } from 'antd';
+// src/components/SideDrawer.tsx
+import React, { useState, useEffect, Suspense } from 'react';
+import { Checkbox, Drawer, Form, Select, Spin, Alert, Button } from 'antd';
 import { DrawerProps } from 'antd/lib/drawer';
 import { useTranslation } from 'react-i18next';
 
@@ -12,6 +13,16 @@ import { toggleVisibility } from '../../store/drawer';
 import { fetchEnumValues } from '../../firebase'; // Firestore fetch function
 
 import './SideDrawer.less'; // Additional styles
+
+// Optional: Define TypeScript interface for enum data
+interface EnumData {
+  ALLOWED_TACTICS: string[];
+  ALLOWED_RAID_LOCATION_CATEGORY: string[];
+  ALLOWED_DETAIL_LOCATION: string[];
+  ALLOWED_WAS_SUCCESSFUL: string[];
+  ALLOWED_LOCATION_REFERENCE: string[];
+  ALLOWED_SOURCE_OF_INFO: string[];
+}
 
 export const SideDrawer: React.FC<Partial<DrawerProps>> = (props): JSX.Element => {
   const dispatch = useAppDispatch();
@@ -31,49 +42,36 @@ export const SideDrawer: React.FC<Partial<DrawerProps>> = (props): JSX.Element =
   // ------------------------------
   // State for enumerations from Firestore
   // ------------------------------
-  const [enumData, setEnumData] = useState<null | Record<string, string[]>>(null);
+  const [enumData, setEnumData] = useState<EnumData | null>(null);
+  const [isLoadingEnums, setIsLoadingEnums] = useState(false);
+  const [enumError, setEnumError] = useState<string | null>(null);
 
   // ------------------------------
-  // Fetch enums on mount
+  // Fetch enums when the drawer is opened
   // ------------------------------
   useEffect(() => {
-    (async () => {
-      const data = await fetchEnumValues();
-      if (data) {
-        setEnumData(data);
-      }
-    })();
-  }, []);
+    if (visible && !enumData) {
+      const loadEnums = async () => {
+        setIsLoadingEnums(true);
+        setEnumError(null);
+        try {
+          const data = await fetchEnumValues();
+          if (data) {
+            setEnumData(data as EnumData);
+          } else {
+            setEnumError("Failed to load enumeration data.");
+          }
+        } catch (error) {
+          console.error("Error fetching enums:", error);
+          setEnumError("An error occurred while fetching data.");
+        } finally {
+          setIsLoadingEnums(false);
+        }
+      };
 
-  // ------------------------------
-  // Loading state
-  // ------------------------------
-  if (!enumData) {
-    return (
-      <Drawer
-        title={t('SideDrawer.title')}
-        placement="right"
-        onClose={() => dispatch(toggleVisibility())}
-        open={visible}
-        mask={false}
-        className="custom-side-drawer"
-        {...props}
-      >
-        <div>Loading enumerations...</div>
-      </Drawer>
-    );
-  }
-
-  // ------------------------------
-  // Extract arrays from fetched data
-  // (default to [] if missing)
-  // ------------------------------
-  const ALLOWED_TACTICS = enumData.ALLOWED_TACTICS || [];
-  const ALLOWED_RAID_LOCATION_CATEGORY = enumData.ALLOWED_RAID_LOCATION_CATEGORY || [];
-  const ALLOWED_DETAIL_LOCATION = enumData.ALLOWED_DETAIL_LOCATION || [];
-  const ALLOWED_WAS_SUCCESSFUL = enumData.ALLOWED_WAS_SUCCESSFUL || [];
-  const ALLOWED_LOCATION_REFERENCE = enumData.ALLOWED_LOCATION_REFERENCE || [];
-  const ALLOWED_SOURCE_OF_INFO = enumData.ALLOWED_SOURCE_OF_INFO || [];
+      loadEnums();
+    }
+  }, [visible, enumData]);
 
   // ------------------------------
   // Handlers
@@ -86,6 +84,38 @@ export const SideDrawer: React.FC<Partial<DrawerProps>> = (props): JSX.Element =
     setSelectedTactics(checkedValues);
   };
 
+  const handleFormReset = () => {
+    setSelectedTactics([]);
+    setSelectedRaidCategory(undefined);
+    setSelectedDetailLocation(undefined);
+    setSelectedWasSuccessful(undefined);
+    setSelectedLocationReference(undefined);
+    setSelectedSourceOfInfo(undefined);
+  };
+
+  // ------------------------------
+  // Form Submission Handler (Optional)
+  // ------------------------------
+  const handleFormSubmit = () => {
+    // Implement form submission logic here
+    // For example, dispatching actions or calling APIs
+    console.log('Form Submitted with values:', {
+      selectedTactics,
+      selectedRaidCategory,
+      selectedDetailLocation,
+      selectedWasSuccessful,
+      selectedLocationReference,
+      selectedSourceOfInfo,
+    });
+
+    // Close the drawer after submission
+    toggleDrawer();
+    handleFormReset();
+  };
+
+  // ------------------------------
+  // Render Logic
+  // ------------------------------
   return (
     <Drawer
       title={t('SideDrawer.title')}
@@ -94,14 +124,31 @@ export const SideDrawer: React.FC<Partial<DrawerProps>> = (props): JSX.Element =
       open={visible}
       mask={false}
       className="custom-side-drawer"
+      destroyOnClose
       {...props}
     >
-      <React.Suspense fallback={null}>
-        <Form layout="vertical">
+      {isLoadingEnums ? (
+        <div style={{ textAlign: 'center', padding: '20px' }}>
+          <Spin tip="Loading..." />
+        </div>
+      ) : enumError ? (
+        <Alert
+          message="Error"
+          description={enumError}
+          type="error"
+          showIcon
+          closable
+        />
+      ) : enumData ? (
+        <Form layout="vertical" onFinish={handleFormSubmit}>
           {/* Tactics (Multiple) */}
-          <Form.Item label="Tactics">
+          <Form.Item
+            label="Tactics"
+            required
+            rules={[{ required: true, message: 'Please select at least one tactic.' }]}
+          >
             <Checkbox.Group
-              options={ALLOWED_TACTICS.map((tactic) => ({
+              options={enumData.ALLOWED_TACTICS.map((tactic) => ({
                 label: tactic,
                 value: tactic
               }))}
@@ -111,14 +158,18 @@ export const SideDrawer: React.FC<Partial<DrawerProps>> = (props): JSX.Element =
           </Form.Item>
 
           {/* Raid Location Category (Single) */}
-          <Form.Item label="Raid Location Category">
+          <Form.Item
+            label="Raid Location Category"
+            required
+            rules={[{ required: true, message: 'Please select a raid location category.' }]}
+          >
             <Select
               placeholder="Select a category"
               value={selectedRaidCategory}
               onChange={setSelectedRaidCategory}
               allowClear
             >
-              {ALLOWED_RAID_LOCATION_CATEGORY.map((category) => (
+              {enumData.ALLOWED_RAID_LOCATION_CATEGORY.map((category) => (
                 <Select.Option key={category} value={category}>
                   {category}
                 </Select.Option>
@@ -127,14 +178,18 @@ export const SideDrawer: React.FC<Partial<DrawerProps>> = (props): JSX.Element =
           </Form.Item>
 
           {/* Detail Location (Single) */}
-          <Form.Item label="Detail Location">
+          <Form.Item
+            label="Detail Location"
+            required
+            rules={[{ required: true, message: 'Please select a detail location.' }]}
+          >
             <Select
               placeholder="Select a detail location"
               value={selectedDetailLocation}
               onChange={setSelectedDetailLocation}
               allowClear
             >
-              {ALLOWED_DETAIL_LOCATION.map((detail) => (
+              {enumData.ALLOWED_DETAIL_LOCATION.map((detail) => (
                 <Select.Option key={detail} value={detail}>
                   {detail}
                 </Select.Option>
@@ -143,14 +198,18 @@ export const SideDrawer: React.FC<Partial<DrawerProps>> = (props): JSX.Element =
           </Form.Item>
 
           {/* Was Successful (Single) */}
-          <Form.Item label="Was Successful">
+          <Form.Item
+            label="Was Successful"
+            required
+            rules={[{ required: true, message: 'Please select an outcome.' }]}
+          >
             <Select
               placeholder="Select outcome"
               value={selectedWasSuccessful}
               onChange={setSelectedWasSuccessful}
               allowClear
             >
-              {ALLOWED_WAS_SUCCESSFUL.map((option) => (
+              {enumData.ALLOWED_WAS_SUCCESSFUL.map((option) => (
                 <Select.Option key={option} value={option}>
                   {option}
                 </Select.Option>
@@ -159,14 +218,18 @@ export const SideDrawer: React.FC<Partial<DrawerProps>> = (props): JSX.Element =
           </Form.Item>
 
           {/* Location Reference (Single) */}
-          <Form.Item label="Location Reference">
+          <Form.Item
+            label="Location Reference"
+            required
+            rules={[{ required: true, message: 'Please select a location reference.' }]}
+          >
             <Select
               placeholder="Select reference"
               value={selectedLocationReference}
               onChange={setSelectedLocationReference}
               allowClear
             >
-              {ALLOWED_LOCATION_REFERENCE.map((ref) => (
+              {enumData.ALLOWED_LOCATION_REFERENCE.map((ref) => (
                 <Select.Option key={ref} value={ref}>
                   {ref}
                 </Select.Option>
@@ -175,14 +238,18 @@ export const SideDrawer: React.FC<Partial<DrawerProps>> = (props): JSX.Element =
           </Form.Item>
 
           {/* Source of Info (Single) */}
-          <Form.Item label="Source of Info">
+          <Form.Item
+            label="Source of Info"
+            required
+            rules={[{ required: true, message: 'Please select a source of information.' }]}
+          >
             <Select
               placeholder="Select source"
               value={selectedSourceOfInfo}
               onChange={setSelectedSourceOfInfo}
               allowClear
             >
-              {ALLOWED_SOURCE_OF_INFO.map((source) => (
+              {enumData.ALLOWED_SOURCE_OF_INFO.map((source) => (
                 <Select.Option key={source} value={source}>
                   {source}
                 </Select.Option>
@@ -190,8 +257,30 @@ export const SideDrawer: React.FC<Partial<DrawerProps>> = (props): JSX.Element =
             </Select>
           </Form.Item>
 
+          {/* Additional Content (Lazy Loaded Component) */}
+          <Suspense fallback={<Spin tip="Loading layers..." />}>
+            <BasicLayerTree />
+          </Suspense>
+
+          {/* Form Actions */}
+          <div className="drawer-footer" style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '16px' }}>
+            <Button onClick={toggleDrawer} style={{ marginRight: '8px' }}>
+              {t('SideDrawer.cancel')}
+            </Button>
+            <Button type="primary" htmlType="submit">
+              {t('SideDrawer.submit')}
+            </Button>
+          </div>
         </Form>
-      </React.Suspense>
+      ) : (
+        <Alert
+          message="No Data"
+          description="No enumeration data available."
+          type="warning"
+          showIcon
+          closable
+        />
+      )}
     </Drawer>
   );
 };
