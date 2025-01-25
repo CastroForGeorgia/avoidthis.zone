@@ -19,7 +19,6 @@ import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
 import EsriJSON from 'ol/format/EsriJSON';
 import { Fill, Stroke, Style } from 'ol/style';
-import { Heatmap as HeatmapLayer } from 'ol/layer';
 import App from './App';
 import i18n from './i18n';
 import { store } from './store/store';
@@ -27,7 +26,6 @@ import './index.less';
 import { FeatureStoreProvider } from './store/FeatureStore';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { bbox } from 'ol/loadingstrategy';
-import debounce from 'lodash/debounce';
 
 // ----------------------------------
 // 1) The function that creates and configures our default map with dynamic loading
@@ -105,27 +103,6 @@ async function setupDefaultMap(): Promise<OlMap> {
 
   // Initialize interactions and modify if needed
   const interactions = defaultInteractions();
-  // Find and modify DoubleClickZoom interaction if necessary
-  const dblClickZoom = interactions
-    .getArray()
-    .find((i) => i instanceof DoubleClickZoom) as DoubleClickZoom | undefined;
-
-  if (dblClickZoom) {
-    dblClickZoom.on('change:active', () => {
-      console.log('[DoubleClickZoom] active changed =>', dblClickZoom.getActive());
-    });
-
-    dblClickZoom.on('propertychange', (evt) => {
-      console.log('[DoubleClickZoom] property changed:', evt);
-    });
-
-    dblClickZoom.on('change', () => {
-      console.log('[DoubleClickZoom] something changed, current props:', dblClickZoom.getProperties());
-    });
-
-    // Optionally disable double-click zoom
-    // dblClickZoom.setActive(false);
-  }
 
   // Create map with 3 layers (OSM, Districts, Heatmap)
   const map = new OlMap({
@@ -133,8 +110,8 @@ async function setupDefaultMap(): Promise<OlMap> {
       projection: 'EPSG:3857',
       center: fromLonLat([-84.3880, 33.7490]), // Updated center to Atlanta coordinates
       zoom: 10, // Updated zoom level for Atlanta metro area
-      minZoom: 6,
-      maxZoom: 14,
+      minZoom: 10,
+      maxZoom: 10,
       extent: georgiaExtent,
     }),
     interactions: interactions,
@@ -143,13 +120,6 @@ async function setupDefaultMap(): Promise<OlMap> {
       zoom: true,
     }),
   });  
-
-  // // Debounce map moveend events to limit fetch frequency
-  // const debouncedLoadFeatures = debounce(() => {
-  //   districtSource.refresh(); // Triggers the loader based on current extent
-  // }, 500); // 500ms debounce delay
-
-  // map.on('moveend', debouncedLoadFeatures);
 
   return map;
 }
