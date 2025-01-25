@@ -7,6 +7,7 @@ import ToggleDrawerButton from './components/ToggleDrawerButton';
 import { useAppSelector } from './hooks/useAppSelector';
 import { signInAnonymouslyIfNeeded } from './firebase';
 import './App.less';
+import { DoubleClickDragZoomExtension } from './map/DoubleClickDragZoomExtension';
 
 export const App: React.FC = (): JSX.Element => {
   const isDrawerVisible = useAppSelector((state) => state.drawer.visible);
@@ -18,8 +19,12 @@ export const App: React.FC = (): JSX.Element => {
 
   return (
     <div className="App">
+      {/* The actual map */}
       <BasicMapComponent />
-      <div className={`map-controls ${isDrawerVisible && 'drawer-open'}`}>
+      {/* Attach the OL DblClickDragZoom interaction */}
+      <DoubleClickDragZoomExtension />
+      {/* Some UI controls on top of the map */}
+      <div className={`map-controls ${isDrawerVisible ? 'drawer-open' : ''}`}>
         <BasicNominatimSearch />
         <ToggleDrawerButton />
       </div>

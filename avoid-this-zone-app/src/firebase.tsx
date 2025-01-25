@@ -11,13 +11,13 @@ import { getFirestore, doc, getDoc } from "firebase/firestore";
 
 // Your existing Firebase config
 const firebaseConfig = {
-    apiKey: "AIzaSyCO80DNSSNFMTxQsuZX9kxnTRwQ-hldKFQ",
-    authDomain: "avoidthiszone.firebaseapp.com",
-    projectId: "avoidthiszone",
-    storageBucket: "avoidthiszone.firebasestorage.app",
-    messagingSenderId: "1057388013519",
-    appId: "1:1057388013519:web:18349cb9e234b5a4e514ba",
-    measurementId: "G-4ZWW3VETHM"
+    apiKey: "",
+    authDomain: "",
+    projectId: "",
+    storageBucket: "",
+    messagingSenderId: "",
+    appId: "",
+    measurementId: ""
   };
 
 // Initialize Firebase
