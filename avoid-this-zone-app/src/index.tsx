@@ -31,6 +31,7 @@ import { store } from './store/store';
 
 import './index.less';
 import { FeatureStoreProvider } from './store/FeatureStore';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 
 // ----------------------------------
 // 1) The function that creates and configures our default map
@@ -165,15 +166,37 @@ async function renderApp() {
     root.render(
       <React.StrictMode>
         <React.Suspense fallback={<span></span>}>
-          <ConfigProvider locale={getConfigLang(i18n.language)}>
-            <ReduxProvider store={store}>
-              <MapContext.Provider value={map}>
-                <FeatureStoreProvider>
-                  <App />
-                </FeatureStoreProvider>
-              </MapContext.Provider>
-            </ReduxProvider>
-          </ConfigProvider>
+          <HelmetProvider>
+            <ConfigProvider locale={getConfigLang(i18n.language)}>
+              <ReduxProvider store={store}>
+                <MapContext.Provider value={map}>
+                  <FeatureStoreProvider>
+                    <Helmet>
+                      <html lang="en" />
+                      <title>Avoid This Zone - ICE Activity Tracker for Georgia</title>
+                      <meta name="description" content="Stay informed with 'Avoid This Zone,' an interactive map tracking ICE activity and providing safety alerts across Georgia. Protect your community today." />
+                      <meta name="keywords" content="Georgia ICE tracker, ICE activity map, avoid ICE zones, community safety, Georgia heatmap, local immigration alerts, interactive map, OpenLayers, React" />
+                      <meta name="author" content="Andres Castro" />
+                      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                      <meta property="og:title" content="Avoid This Zone - ICE Activity Tracker for Georgia" />
+                      <meta property="og:description" content="Explore ICE activity and safety zones on an interactive map tailored for Georgia residents. Stay safe and protect your community." />
+                      <meta property="og:image" content="path/to/your/optimized-image.png" />
+                      <meta property="og:image:alt" content="Screenshot of the Avoid This Zone map highlighting ICE activity areas in Georgia." />
+                      <meta property="og:type" content="website" />
+                      <meta property="og:url" content="https://avoidthis.zone" />
+                      <meta name="twitter:card" content="summary_large_image" />
+                      <meta name="twitter:title" content="Avoid This Zone - ICE Activity Tracker for Georgia" />
+                      <meta name="twitter:description" content="Stay informed about ICE activity across Georgia with this interactive safety map." />
+                      <meta name="twitter:image" content="path/to/your/optimized-image.png" />
+                      <meta name="twitter:image:alt" content="Screenshot of the Avoid This Zone map highlighting ICE activity areas in Georgia." />
+                      <link rel="canonical" href="https://avoidthis.zone" />
+                    </Helmet>
+                    <App />
+                  </FeatureStoreProvider>
+                </MapContext.Provider>
+              </ReduxProvider>
+            </ConfigProvider>
+          </HelmetProvider>
         </React.Suspense>
       </React.StrictMode>
     );
