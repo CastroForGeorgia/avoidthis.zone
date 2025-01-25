@@ -25,7 +25,7 @@ export const App: React.FC = (): JSX.Element => {
       <DoubleClickDragZoomExtension />
       {/* Some UI controls on top of the map */}
       <div className={`map-controls ${isDrawerVisible ? 'drawer-open' : ''}`}>
-        <BasicNominatimSearch />
+        {/* <BasicNominatimSearch /> */}
         <ToggleDrawerButton />
       </div>
       <SideDrawer />
