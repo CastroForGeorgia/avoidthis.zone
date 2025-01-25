@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import BasicMapComponent from './components/BasicMapComponent';
-import BasicNominatimSearch from './components/BasicNominatimSearch';
 import SideDrawer from './components/SideDrawer';
 import ToggleDrawerButton from './components/ToggleDrawerButton';
 
