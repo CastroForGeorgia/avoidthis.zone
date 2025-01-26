@@ -1,9 +1,7 @@
 import React, { useEffect, Suspense } from "react";
-import { Drawer, Spin, Alert, Button, Select } from "antd";
+import { Drawer, Spin, Alert } from "antd";
 import { DrawerProps } from "antd/lib/drawer";
 import { useTranslation } from "react-i18next";
-
-const { Option } = Select;
 
 const BasicLayerTree = React.lazy(() => import("../BasicLayerTree"));
 
@@ -19,7 +17,7 @@ import LanguageSwitcher from "../LanguageSwitcher/LanguageSwitcher";
 const SideDrawer: React.FC<Partial<DrawerProps>> = (props): JSX.Element => {
   const dispatch = useAppDispatch();
   const visible = useAppSelector((state) => state.drawer.visible);
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   // State for enumerations
   const [enumData, setEnumData] = React.useState<Record<string, any> | null>(null);
@@ -54,16 +52,7 @@ const SideDrawer: React.FC<Partial<DrawerProps>> = (props): JSX.Element => {
     dispatch(toggleVisibility());
   };
 
-  const handleFormSubmit = (values: any) => {
-    console.log("Form Submitted with values:", values);
 
-    // Close the drawer after submission
-    toggleDrawer();
-  };
-
-  const changeLanguage = (lang: string) => {
-    i18n.changeLanguage(lang);
-  };
 
   return (
     <Drawer

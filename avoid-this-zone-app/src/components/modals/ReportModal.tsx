@@ -9,6 +9,7 @@ import TileLayer from 'ol/layer/Tile';
 import { fromLonLat } from 'ol/proj';
 import OSM from 'ol/source/OSM';
 import { EnumForm } from '../forms/EnumForm';
+import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher';
 
 interface ReportModalProps {
     clickedCoordinates: [number, number];
@@ -90,6 +91,8 @@ const ReportModal: React.FC<ReportModalProps> = ({
             footer={null}
             destroyOnClose
         >
+            {/* Language Switcher */}
+            <LanguageSwitcher />
             {clickedCoordinates && <Minimap coordinates={clickedCoordinates} />}
             <EnumForm
                 enumData={enumData}

@@ -151,7 +151,7 @@ export const EnumForm: React.FC<{
                 )}
                 {onSubmit && (
                     <Button type="primary" htmlType="submit">
-                        {t("Common.submitButton")}
+                        {t("Common.confirmButton")}
                     </Button>
                 )}
             </div>
