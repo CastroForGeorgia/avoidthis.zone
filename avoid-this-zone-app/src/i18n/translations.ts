@@ -9,15 +9,38 @@ export default {
         errorMessage: 'Error while loading the application',
         errorDescription:
           'An unexpected error occurred while loading the application. Please try to reload the page.',
+        reloadButton: 'Reload Application',
       },
       BasicNominatimSearch: {
         placeholder: 'Place name, street name, district name, POI, etc.',
+        noResultsMessage: 'No results found. Try refining your search.',
       },
       SideDrawer: {
         title: 'Filters',
+        clearAllButton: 'Clear All Filters',
+        applyButton: 'Apply Filters',
       },
       ToggleDrawerButton: {
         tooltip: 'Show/hide Filters',
+      },
+      ReportModal: {
+        title: 'Submit a Report',
+        loadingMessage: 'Loading...',
+        successMessage: 'Your report has been successfully submitted!',
+        errorMessage: 'Failed to submit the report. Please try again.',
+        cancelButton: 'Cancel',
+        submitButton: 'Submit',
+        formErrors: {
+          requiredField: 'This field is required.',
+        },
+        labels: {
+          tactics: 'Tactics',
+          raidLocationCategory: 'Raid Location Category',
+          detailLocation: 'Detail Location',
+          wasSuccessful: 'Was the operation successful?',
+          locationReference: 'Location Reference',
+          sourceOfInfo: 'Source of Information',
+        },
       },
       Enums: {
         ALLOWED_TACTICS: {
@@ -73,81 +96,15 @@ export default {
           PUBLIC_RECORD: 'Public Record',
         },
       },
-    },
-  },
-  es: {
-    translation: {
-      Index: {
-        applicationLoadErrorMessage: 'Error al cargar la aplicación',
-        applicationLoadErrorDescription:
-          'La aplicación con el ID {{applicationId}} no se pudo cargar correctamente. ' +
-          'Está viendo la configuración predeterminada de la aplicación.',
-        errorMessage: 'Error al cargar la aplicación',
-        errorDescription:
-          'Ocurrió un error inesperado al cargar la aplicación. Por favor, intente recargar la página.',
-      },
-      BasicNominatimSearch: {
-        placeholder: 'Nombre del lugar, nombre de la calle, nombre del distrito, punto de interés, etc.',
-      },
-      SideDrawer: {
-        title: 'Filtros',
-      },
-      ToggleDrawerButton: {
-        tooltip: 'Mostrar/ocultar filtros',
-      },
-      Enums: {
-        ALLOWED_TACTICS: {
-          SURVEILLANCE: 'Vigilancia',
-          WARRANTLESS_ENTRY: 'Entrada sin orden judicial',
-          RUSE: 'Engaño',
-          COLLATERAL_ARREST: 'Arresto colateral',
-          USE_OF_FORCE: 'Uso de la fuerza',
-          CHECKPOINT: 'Punto de control',
-          KNOCK_AND_TALK: 'Llamar y hablar',
-          ID_CHECK: 'Revisión de identificación',
-        },
-        ALLOWED_RAID_LOCATION_CATEGORY: {
-          HOME: 'Casa',
-          PUBLIC: 'Espacio público',
-          WORK: 'Trabajo',
-          COURT: 'Juzgado',
-          HOSPITAL: 'Hospital',
-          BORDER: 'Frontera',
-          OTHER: 'Otro',
-        },
-        ALLOWED_DETAIL_LOCATION: {
-          STREET: 'Calle',
-          CAR_STOP: 'Parada de automóvil',
-          SHELTER: 'Refugio',
-          PROBATION: 'Oficina de libertad condicional',
-          PAROLE: 'Oficina de libertad bajo palabra',
-          WORKPLACE: 'Lugar de trabajo',
-          HOSPITAL_WARD: 'Sala de hospital',
-          IMMIGRATION_CENTER: 'Centro de inmigración',
-          BUS_TERMINAL: 'Terminal de autobuses',
-          TRAIN_STATION: 'Estación de tren',
-          AIRPORT: 'Aeropuerto',
-          OTHER_FACILITY: 'Otra instalación',
-        },
-        ALLOWED_WAS_SUCCESSFUL: {
-          YES: 'Sí',
-          NO: 'No',
-          UNKNOWN: 'Desconocido',
-        },
-        ALLOWED_LOCATION_REFERENCE: {
-          INTERSECTION: 'Intersección',
-          BUS_STOP: 'Parada de autobús',
-          TRAIN_STATION: 'Estación de tren',
-          ZIP_CODE: 'Código postal',
-          LANDMARK: 'Punto de referencia',
-          NONE: 'Ninguno',
-        },
-        ALLOWED_SOURCE_OF_INFO: {
-          NEWS_ARTICLE: 'Artículo de noticias',
-          PERSONAL_OBSERVATION: 'Observación personal',
-          COMMUNITY_REPORT: 'Informe comunitario',
-          PUBLIC_RECORD: 'Registro público',
-        },
+      Common: {
+        loadingMessage: 'Loading, please wait...',
+        errorOccurred: 'An error occurred. Please try again later.',
+        backButton: 'Back',
+        nextButton: 'Next',
+        closeButton: 'Close',
+        searchPlaceholder: 'Search...',
+        confirmButton: 'Confirm',
+        cancelButton: 'Cancel',
       },
     },
   },

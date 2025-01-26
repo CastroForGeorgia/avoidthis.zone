@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Form, Select, Checkbox, Button, Spin, Alert } from 'antd';
+import { Modal, Form, Button, Spin, Alert } from 'antd';
+import { useTranslation } from 'react-i18next'; // Assuming you're using react-i18next for translations
 import { Map as OlMap, View } from 'ol';
 
 import { fetchEnumValues } from '../../firebase';
@@ -27,6 +28,7 @@ const ReportModal: React.FC<ReportModalProps> = ({
     setClickedCoordinates,
     onSubmit,
 }) => {
+    const { t } = useTranslation();
     const [enumData, setEnumData] = useState<null | Record<string, any>>(null);
     const [isLoadingEnums, setIsLoadingEnums] = useState(false);
     const [enumError, setEnumError] = useState<string | null>(null);
@@ -66,11 +68,11 @@ const ReportModal: React.FC<ReportModalProps> = ({
                     if (data) {
                         setEnumData(data);
                     } else {
-                        setEnumError("Failed to load enumeration data.");
+                        setEnumError(t('ReportModal.errorMessage'));
                     }
                 } catch (error) {
-                    console.error("Error fetching enums:", error);
-                    setEnumError("An error occurred while fetching data.");
+                    console.error(t('ReportModal.errorMessage'), error);
+                    setEnumError(t('ReportModal.errorMessage'));
                 } finally {
                     setIsLoadingEnums(false);
                 }
@@ -78,14 +80,14 @@ const ReportModal: React.FC<ReportModalProps> = ({
 
             loadEnums();
         }
-    }, [enumData]);
+    }, [enumData, t]);
 
     const handleFormSubmit = (values: any) => {
         const report = {
             coordinates: clickedCoordinates,
             ...values,
         };
-        console.log('New Report:', report);
+        console.log(t('ReportModal.successMessage'), report);
 
         onSubmit(report);
         setClickedCoordinates(null);
@@ -97,7 +99,7 @@ const ReportModal: React.FC<ReportModalProps> = ({
 
     return (
         <Modal
-            title="Submit a Report"
+            title={t('ReportModal.title')}
             open={!!clickedCoordinates}
             onCancel={handleCancel}
             footer={null}
@@ -119,11 +121,11 @@ const ReportModal: React.FC<ReportModalProps> = ({
             )}
             {isLoadingEnums ? (
                 <div style={{ textAlign: 'center', padding: '20px' }}>
-                    <Spin tip="Loading..." />
+                    <Spin tip={t('ReportModal.loadingMessage')} />
                 </div>
             ) : enumError ? (
                 <Alert
-                    message="Error"
+                    message={t('Common.errorOccurred')}
                     description={enumError}
                     type="error"
                     showIcon
@@ -131,75 +133,102 @@ const ReportModal: React.FC<ReportModalProps> = ({
                 />
             ) : enumData ? (
                 <Form onFinish={handleFormSubmit} layout="vertical">
-                    {/* Tactics */}
                     <Form.Item
-                        label="Tactics"
+                        label={t('ReportModal.labels.tactics')}
                         name="tactics"
-                        rules={[{ required: true, message: 'Please select at least one tactic.' }]}
+                        rules={[
+                            {
+                                required: true,
+                                message: t('ReportModal.formErrors.requiredField'),
+                            },
+                        ]}
                     >
                         <TacticsSelector options={enumData.ALLOWED_TACTICS} />
                     </Form.Item>
 
-
-                    {/* Raid Location Category */}
                     <Form.Item
-                        label="Raid Location Category"
+                        label={t('ReportModal.labels.raidLocationCategory')}
                         name="raidLocationCategory"
-                        rules={[{ required: true, message: 'Please select a category.' }]}
+                        rules={[
+                            {
+                                required: true,
+                                message: t('ReportModal.formErrors.requiredField'),
+                            },
+                        ]}
                     >
                         <RaidLocationCategorySelector options={enumData.ALLOWED_RAID_LOCATION_CATEGORY} />
                     </Form.Item>
 
-                    {/* Detail Location */}
                     <Form.Item
-                        label="Detail Location"
+                        label={t('ReportModal.labels.detailLocation')}
                         name="detailLocation"
-                        rules={[{ required: true, message: 'Please select a detail location.' }]}
+                        rules={[
+                            {
+                                required: true,
+                                message: t('ReportModal.formErrors.requiredField'),
+                            },
+                        ]}
                     >
                         <DetailLocationSelector options={enumData.ALLOWED_DETAIL_LOCATION} />
                     </Form.Item>
 
-                    {/* Was Successful */}
                     <Form.Item
-                        label="Was Successful"
+                        label={t('ReportModal.labels.wasSuccessful')}
                         name="wasSuccessful"
-                        rules={[{ required: true, message: 'Please select an outcome.' }]}
+                        rules={[
+                            {
+                                required: true,
+                                message: t('ReportModal.formErrors.requiredField'),
+                            },
+                        ]}
                     >
                         <WasSuccessfulSelector options={enumData.ALLOWED_WAS_SUCCESSFUL} />
                     </Form.Item>
 
-                    {/* Location Reference */}
                     <Form.Item
-                        label="Location Reference"
+                        label={t('ReportModal.labels.locationReference')}
                         name="locationReference"
-                        rules={[{ required: true, message: 'Please select a location reference.' }]}
+                        rules={[
+                            {
+                                required: true,
+                                message: t('ReportModal.formErrors.requiredField'),
+                            },
+                        ]}
                     >
                         <LocationReferenceSelector options={enumData.ALLOWED_LOCATION_REFERENCE} />
                     </Form.Item>
 
-                    {/* Source of Info */}
                     <Form.Item
-                        label="Source of Info"
+                        label={t('ReportModal.labels.sourceOfInfo')}
                         name="sourceOfInfo"
-                        rules={[{ required: true, message: 'Please select a source of information.' }]}
+                        rules={[
+                            {
+                                required: true,
+                                message: t('ReportModal.formErrors.requiredField'),
+                            },
+                        ]}
                     >
                         <SourceOfInfoSelector options={enumData.ALLOWED_SOURCE_OF_INFO} />
                     </Form.Item>
 
+
                     {/* Submit Button */}
-                    <div className="modal-footer" style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <div
+                        className="modal-footer"
+                        style={{ display: 'flex', justifyContent: 'flex-end' }}
+                    >
                         <Button onClick={handleCancel} style={{ marginRight: '8px' }}>
-                            Cancel
+                            {t('Common.cancelButton')}
                         </Button>
                         <Button type="primary" htmlType="submit">
-                            Submit
+                            {t('Common.confirmButton')}
                         </Button>
                     </div>
                 </Form>
             ) : (
                 <Alert
-                    message="No Data"
-                    description="No enumeration data available."
+                    message={t('Common.errorOccurred')}
+                    description={t('ReportModal.errorMessage')}
                     type="warning"
                     showIcon
                     closable
