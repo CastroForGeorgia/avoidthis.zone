@@ -30,6 +30,7 @@ export default {
         errorMessage: 'Failed to submit the report. Please try again.',
         cancelButton: 'Cancel',
         submitButton: 'Submit',
+        resetButton: 'Reset',
         formErrors: {
           requiredField: 'This field is required.',
         },
@@ -101,6 +102,7 @@ export default {
         errorOccurred: 'An error occurred. Please try again later.',
         backButton: 'Back',
         nextButton: 'Next',
+        resetButton: 'Reset',
         closeButton: 'Close',
         searchPlaceholder: 'Search...',
         confirmButton: 'Confirm',
