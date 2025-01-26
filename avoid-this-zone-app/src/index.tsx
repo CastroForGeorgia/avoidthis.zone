@@ -3,14 +3,14 @@
 import React from 'react';
 import { Alert } from 'antd';
 import ConfigProvider from 'antd/lib/config-provider';
-import enGB from 'antd/lib/locale/en_GB';
+import enUS from 'antd/lib/locale/en_US';
 import { defaults as OlControlDefaults } from 'ol/control';
 import OlLayerTile from 'ol/layer/Tile';
 import OlMap from 'ol/Map';
 import { fromLonLat } from 'ol/proj';
 import OlSourceOSM from 'ol/source/OSM';
 import OlView from 'ol/View';
-import { defaults as defaultInteractions, DoubleClickZoom } from 'ol/interaction';
+import { defaults as defaultInteractions } from 'ol/interaction';
 import { createRoot } from 'react-dom/client';
 import { Provider as ReduxProvider } from 'react-redux';
 import Logger from '@terrestris/base-util/dist/Logger';
@@ -119,7 +119,7 @@ async function setupDefaultMap(): Promise<OlMap> {
     controls: OlControlDefaults({
       zoom: true,
     }),
-  });  
+  });
 
   return map;
 }
@@ -130,7 +130,7 @@ async function setupMap(): Promise<OlMap> {
 }
 
 // Locale helper for antd
-const getConfigLang = (lang: string) => enGB;
+const getConfigLang = (lang: string) => enUS;
 
 // ----------------------------------
 // 2) The main render function
@@ -159,7 +159,7 @@ async function renderApp() {
                 <MapContext.Provider value={map}>
                   <FeatureStoreProvider>
                     <Helmet>
-                      <html lang="en" />
+                      <html lang={i18n.language} />
                       <title>Avoid This Zone - ICE Activity Tracker for Georgia</title>
                       <meta
                         name="description"
@@ -183,20 +183,6 @@ async function renderApp() {
                       />
                       <meta property="og:type" content="website" />
                       <meta property="og:url" content="https://avoidthis.zone" />
-                      <meta name="twitter:card" content="summary_large_image" />
-                      <meta
-                        name="twitter:title"
-                        content="Avoid This Zone - ICE Activity Tracker for Georgia"
-                      />
-                      <meta
-                        name="twitter:description"
-                        content="Stay informed about ICE activity across Georgia with this interactive safety map."
-                      />
-                      <meta name="twitter:image" content="path/to/your/optimized-image.png" />
-                      <meta
-                        name="twitter:image:alt"
-                        content="Screenshot of the Avoid This Zone map highlighting ICE activity areas in Georgia."
-                      />
                       <link rel="canonical" href="https://avoidthis.zone" />
                     </Helmet>
                     <App />
