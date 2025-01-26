@@ -13,11 +13,11 @@ i18n
   .init({
     resources,
     fallbackLng: 'en',
-    debug: false,
+    debug: true,
     interpolation: {
       escapeValue: false
     },
-    supportedLngs: ['es', 'en']
+    supportedLngs: ['en', 'es', 'vi', 'ko', 'zh'], // Include all supported languages
   });
 
 export default i18n;

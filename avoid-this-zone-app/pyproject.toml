@@ -1,0 +1,12 @@
+[tool.poetry]
+name = "scripts"
+version = "0.1.0"                 # Use semantic versioning
+description = "Your project description"
+authors = ["Your Name <youremail@example.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+openai = "^1.60.1"
+
+[tool.poetry.scripts]
+translate = "scripts.translate.translate:main"

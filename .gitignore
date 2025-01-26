@@ -70,3 +70,4 @@ node_modules/
 
 apphosting.local.yaml
 .DS_Store
+avoid-this-zone-app/scripts/translate/__pycache__/*

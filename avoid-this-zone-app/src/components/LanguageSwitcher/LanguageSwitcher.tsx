@@ -12,11 +12,11 @@ const LanguageSwitcher: React.FC = () => {
     };
 
     const languageOptions = [
-        { value: "en", label: "English (United States)" },
-        { value: "es", label: "Español (México)" },
-        { value: "vi", label: "Tiếng Việt (Việt Nam)" },
-        { value: "ko", label: "한국어 (대한민국)" }, // Korean with native script and country
-        { value: "zh", label: "中文 (普通话)" }, // Mandarin with native script
+        { value: "en", label: "English (US)" },
+        { value: "es", label: "Español" },
+        { value: "vi", label: "Vietnamese" },
+        { value: "ko", label: "Korean" },
+        { value: "zh", label: "Mandarin (中文)" }, // Mandarin with 中文 for native representation
     ];
 
     return (

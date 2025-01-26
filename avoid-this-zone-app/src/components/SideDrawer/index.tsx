@@ -97,8 +97,7 @@ const SideDrawer: React.FC<Partial<DrawerProps>> = (props): JSX.Element => {
             enumData={enumData}
             isLoading={isLoadingEnums}
             error={enumError}
-            onSubmit={handleFormSubmit}
-            onCancel={toggleDrawer}
+            onReset={toggleDrawer}
           />
 
           {/* Additional Content (Lazy Loaded Component) */}
