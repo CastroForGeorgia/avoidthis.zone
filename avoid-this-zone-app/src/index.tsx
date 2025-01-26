@@ -26,6 +26,7 @@ import './index.less';
 import { FeatureStoreProvider } from './store/FeatureStore';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { bbox } from 'ol/loadingstrategy';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 // ----------------------------------
 // 1) The function that creates and configures our default map with dynamic loading
