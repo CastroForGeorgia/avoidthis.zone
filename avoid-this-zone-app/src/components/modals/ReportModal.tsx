@@ -7,6 +7,12 @@ import MapComponent from '@terrestris/react-geo/dist/Map/MapComponent/MapCompone
 import TileLayer from 'ol/layer/Tile';
 import { fromLonLat } from 'ol/proj';
 import { OSM } from 'ol/source';
+import TacticsSelector from '../selectors/TacticsSelector';
+import RaidLocationCategorySelector from '../selectors/RaidLocationCategorySelector';
+import DetailLocationSelector from '../selectors/DetailLocationSelector';
+import WasSuccessfulSelector from '../selectors/WasSuccessfulSelector';
+import LocationReferenceSelector from '../selectors/LocationReferenceSelector';
+import SourceOfInfoSelector from '../selectors/SourceOfInfoSelector';
 
 interface ReportModalProps {
     map: OlMap;
@@ -21,7 +27,7 @@ const ReportModal: React.FC<ReportModalProps> = ({
     setClickedCoordinates,
     onSubmit,
 }) => {
-    const [enumData, setEnumData] = useState<null | Record<string, string[]>>(null);
+    const [enumData, setEnumData] = useState<null | Record<string, any>>(null);
     const [isLoadingEnums, setIsLoadingEnums] = useState(false);
     const [enumError, setEnumError] = useState<string | null>(null);
     const [minimap, setMinimap] = useState<OlMap | null>(null);
@@ -100,7 +106,7 @@ const ReportModal: React.FC<ReportModalProps> = ({
             {clickedCoordinates && minimap && (
                 <div style={{ height: '200px', marginBottom: '16px' }}>
                     <MapComponent
-                        id='minimap'
+                        id="minimap"
                         map={minimap}
                         className="minimap"
                         style={{
@@ -131,27 +137,17 @@ const ReportModal: React.FC<ReportModalProps> = ({
                         name="tactics"
                         rules={[{ required: true, message: 'Please select at least one tactic.' }]}
                     >
-                        <Checkbox.Group
-                            options={enumData.ALLOWED_TACTICS.map((tactic) => ({
-                                label: tactic,
-                                value: tactic,
-                            }))}
-                        />
+                        <TacticsSelector options={enumData.ALLOWED_TACTICS} />
                     </Form.Item>
+
 
                     {/* Raid Location Category */}
                     <Form.Item
                         label="Raid Location Category"
                         name="raidLocationCategory"
-                        rules={[{ required: true, message: 'Please select a raid location category.' }]}
+                        rules={[{ required: true, message: 'Please select a category.' }]}
                     >
-                        <Select placeholder="Select a category" allowClear>
-                            {enumData.ALLOWED_RAID_LOCATION_CATEGORY.map((category) => (
-                                <Select.Option key={category} value={category}>
-                                    {category}
-                                </Select.Option>
-                            ))}
-                        </Select>
+                        <RaidLocationCategorySelector options={enumData.ALLOWED_RAID_LOCATION_CATEGORY} />
                     </Form.Item>
 
                     {/* Detail Location */}
@@ -160,13 +156,7 @@ const ReportModal: React.FC<ReportModalProps> = ({
                         name="detailLocation"
                         rules={[{ required: true, message: 'Please select a detail location.' }]}
                     >
-                        <Select placeholder="Select a detail location" allowClear>
-                            {enumData.ALLOWED_DETAIL_LOCATION.map((detail) => (
-                                <Select.Option key={detail} value={detail}>
-                                    {detail}
-                                </Select.Option>
-                            ))}
-                        </Select>
+                        <DetailLocationSelector options={enumData.ALLOWED_DETAIL_LOCATION} />
                     </Form.Item>
 
                     {/* Was Successful */}
@@ -175,13 +165,7 @@ const ReportModal: React.FC<ReportModalProps> = ({
                         name="wasSuccessful"
                         rules={[{ required: true, message: 'Please select an outcome.' }]}
                     >
-                        <Select placeholder="Select outcome" allowClear>
-                            {enumData.ALLOWED_WAS_SUCCESSFUL.map((option) => (
-                                <Select.Option key={option} value={option}>
-                                    {option}
-                                </Select.Option>
-                            ))}
-                        </Select>
+                        <WasSuccessfulSelector options={enumData.ALLOWED_WAS_SUCCESSFUL} />
                     </Form.Item>
 
                     {/* Location Reference */}
@@ -190,13 +174,7 @@ const ReportModal: React.FC<ReportModalProps> = ({
                         name="locationReference"
                         rules={[{ required: true, message: 'Please select a location reference.' }]}
                     >
-                        <Select placeholder="Select reference" allowClear>
-                            {enumData.ALLOWED_LOCATION_REFERENCE.map((ref) => (
-                                <Select.Option key={ref} value={ref}>
-                                    {ref}
-                                </Select.Option>
-                            ))}
-                        </Select>
+                        <LocationReferenceSelector options={enumData.ALLOWED_LOCATION_REFERENCE} />
                     </Form.Item>
 
                     {/* Source of Info */}
@@ -205,13 +183,7 @@ const ReportModal: React.FC<ReportModalProps> = ({
                         name="sourceOfInfo"
                         rules={[{ required: true, message: 'Please select a source of information.' }]}
                     >
-                        <Select placeholder="Select source" allowClear>
-                            {enumData.ALLOWED_SOURCE_OF_INFO.map((source) => (
-                                <Select.Option key={source} value={source}>
-                                    {source}
-                                </Select.Option>
-                            ))}
-                        </Select>
+                        <SourceOfInfoSelector options={enumData.ALLOWED_SOURCE_OF_INFO} />
                     </Form.Item>
 
                     {/* Submit Button */}
