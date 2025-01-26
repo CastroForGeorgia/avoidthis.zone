@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Spin, Alert } from 'antd';
+import { Modal } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { Map as OlMap, View } from 'ol';
 

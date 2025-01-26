@@ -17,6 +17,9 @@ export default {
       },
       SideDrawer: {
         title: 'Filters',
+        languageSwitcher: {
+          label: "Select Language"
+        },
         clearAllButton: 'Clear All Filters',
         applyButton: 'Apply Filters',
       },

@@ -1,7 +1,9 @@
 import React, { useEffect, Suspense } from "react";
-import { Drawer, Spin, Alert } from "antd";
+import { Drawer, Spin, Alert, Button, Select } from "antd";
 import { DrawerProps } from "antd/lib/drawer";
 import { useTranslation } from "react-i18next";
+
+const { Option } = Select;
 
 const BasicLayerTree = React.lazy(() => import("../BasicLayerTree"));
 
@@ -12,11 +14,12 @@ import { fetchEnumValues } from "../../firebase";
 import { EnumForm } from "../forms/EnumForm";
 
 import "./SideDrawer.less";
+import LanguageSwitcher from "../LanguageSwitcher/LanguageSwitcher";
 
 const SideDrawer: React.FC<Partial<DrawerProps>> = (props): JSX.Element => {
   const dispatch = useAppDispatch();
   const visible = useAppSelector((state) => state.drawer.visible);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   // State for enumerations
   const [enumData, setEnumData] = React.useState<Record<string, any> | null>(null);
@@ -58,6 +61,10 @@ const SideDrawer: React.FC<Partial<DrawerProps>> = (props): JSX.Element => {
     toggleDrawer();
   };
 
+  const changeLanguage = (lang: string) => {
+    i18n.changeLanguage(lang);
+  };
+
   return (
     <Drawer
       title={t("SideDrawer.title")}
@@ -69,6 +76,9 @@ const SideDrawer: React.FC<Partial<DrawerProps>> = (props): JSX.Element => {
       destroyOnClose
       {...props}
     >
+      {/* Language Switcher */}
+      <LanguageSwitcher />
+
       {isLoadingEnums ? (
         <div style={{ textAlign: "center", padding: "20px" }}>
           <Spin tip={t("SideDrawer.loading")} />
@@ -87,13 +97,14 @@ const SideDrawer: React.FC<Partial<DrawerProps>> = (props): JSX.Element => {
             enumData={enumData}
             isLoading={isLoadingEnums}
             error={enumError}
-            onReset={toggleDrawer}
+            onSubmit={handleFormSubmit}
+            onCancel={toggleDrawer}
           />
 
           {/* Additional Content (Lazy Loaded Component) */}
-          {/* <Suspense fallback={<Spin tip={t("SideDrawer.loadingLayers")} />}>
+          <Suspense fallback={<Spin tip={t("SideDrawer.loadingLayers")} />}>
             <BasicLayerTree />
-          </Suspense> */}
+          </Suspense>
         </>
       ) : (
         <Alert
