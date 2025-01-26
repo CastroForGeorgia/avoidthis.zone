@@ -111,7 +111,7 @@ async function setupDefaultMap(): Promise<OlMap> {
       center: fromLonLat([-84.3880, 33.7490]), // Updated center to Atlanta coordinates
       zoom: 10, // Updated zoom level for Atlanta metro area
       minZoom: 10,
-      maxZoom: 10,
+      maxZoom: 12,
       extent: georgiaExtent,
     }),
     interactions: interactions,

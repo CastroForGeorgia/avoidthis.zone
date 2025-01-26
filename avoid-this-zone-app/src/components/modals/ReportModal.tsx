@@ -1,4 +1,3 @@
-// src/components/ReportModal.tsx
 import React, { useEffect, useState } from 'react';
 import { Modal, Form, Select, Checkbox, Button, Spin, Alert } from 'antd';
 import { Map as OlMap, View } from 'ol';
@@ -11,33 +10,21 @@ import { OSM } from 'ol/source';
 
 interface ReportModalProps {
     map: OlMap;
+    clickedCoordinates: [number, number];
+    setClickedCoordinates: (coords: [number, number] | null) => void;
     onSubmit: (report: any) => void;
 }
 
-const ReportModal: React.FC<ReportModalProps> = ({ map, onSubmit }) => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [clickedCoordinates, setClickedCoordinates] = useState<[number, number] | null>(null);
+const ReportModal: React.FC<ReportModalProps> = ({
+    map,
+    clickedCoordinates,
+    setClickedCoordinates,
+    onSubmit,
+}) => {
     const [enumData, setEnumData] = useState<null | Record<string, string[]>>(null);
     const [isLoadingEnums, setIsLoadingEnums] = useState(false);
     const [enumError, setEnumError] = useState<string | null>(null);
     const [minimap, setMinimap] = useState<OlMap | null>(null);
-
-
-    useEffect(() => {
-        const handleMapClick = (evt: any) => {
-            const coordinates = evt.coordinate as [number, number];
-            setClickedCoordinates(coordinates);
-            setIsModalOpen(true);
-        };
-
-        // Attach map click listener
-        map.on('singleclick', handleMapClick);
-
-        // Cleanup listener on unmount
-        return () => {
-            map.un('singleclick', handleMapClick);
-        };
-    }, [map]);
 
     useEffect(() => {
         if (!minimap) {
@@ -64,8 +51,7 @@ const ReportModal: React.FC<ReportModalProps> = ({ map, onSubmit }) => {
     }, [minimap, clickedCoordinates]);
 
     useEffect(() => {
-        if (isModalOpen && !enumData) {
-            // Fetch enums only when modal is opened and enums are not yet loaded
+        if (!enumData) {
             const loadEnums = async () => {
                 setIsLoadingEnums(true);
                 setEnumError(null);
@@ -86,15 +72,9 @@ const ReportModal: React.FC<ReportModalProps> = ({ map, onSubmit }) => {
 
             loadEnums();
         }
-    }, [isModalOpen, enumData]);
+    }, [enumData]);
 
     const handleFormSubmit = (values: any) => {
-        if (!clickedCoordinates) {
-            // Safety check, should not happen
-            console.error("No coordinates available for the report.");
-            return;
-        }
-
         const report = {
             coordinates: clickedCoordinates,
             ...values,
@@ -102,19 +82,17 @@ const ReportModal: React.FC<ReportModalProps> = ({ map, onSubmit }) => {
         console.log('New Report:', report);
 
         onSubmit(report);
-        setIsModalOpen(false);
         setClickedCoordinates(null);
     };
 
     const handleCancel = () => {
-        setIsModalOpen(false);
         setClickedCoordinates(null);
     };
 
     return (
         <Modal
             title="Submit a Report"
-            open={isModalOpen}
+            open={!!clickedCoordinates}
             onCancel={handleCancel}
             footer={null}
             destroyOnClose
