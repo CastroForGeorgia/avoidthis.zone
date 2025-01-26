@@ -1,9 +1,13 @@
 // src/components/ReportModal.tsx
 import React, { useEffect, useState } from 'react';
 import { Modal, Form, Select, Checkbox, Button, Spin, Alert } from 'antd';
-import { Map as OlMap } from 'ol';
+import { Map as OlMap, View } from 'ol';
 
 import { fetchEnumValues } from '../../firebase';
+import MapComponent from '@terrestris/react-geo/dist/Map/MapComponent/MapComponent';
+import TileLayer from 'ol/layer/Tile';
+import { fromLonLat } from 'ol/proj';
+import { OSM } from 'ol/source';
 
 interface ReportModalProps {
     map: OlMap;
@@ -16,6 +20,8 @@ const ReportModal: React.FC<ReportModalProps> = ({ map, onSubmit }) => {
     const [enumData, setEnumData] = useState<null | Record<string, string[]>>(null);
     const [isLoadingEnums, setIsLoadingEnums] = useState(false);
     const [enumError, setEnumError] = useState<string | null>(null);
+    const [minimap, setMinimap] = useState<OlMap | null>(null);
+
 
     useEffect(() => {
         const handleMapClick = (evt: any) => {
@@ -32,6 +38,30 @@ const ReportModal: React.FC<ReportModalProps> = ({ map, onSubmit }) => {
             map.un('singleclick', handleMapClick);
         };
     }, [map]);
+
+    useEffect(() => {
+        if (!minimap) {
+            const newMinimap = new OlMap({
+                layers: [
+                    new TileLayer({
+                        source: new OSM(),
+                    }),
+                ],
+                view: new View({
+                    center: fromLonLat([-84.3880, 33.7490]),
+                    zoom: 15,
+                    minZoom: 15,
+                    maxZoom: 15,
+                }),
+                controls: [],
+            });
+            setMinimap(newMinimap);
+        }
+
+        if (minimap && clickedCoordinates) {
+            minimap.getView().setCenter(clickedCoordinates);
+        }
+    }, [minimap, clickedCoordinates]);
 
     useEffect(() => {
         if (isModalOpen && !enumData) {
@@ -89,6 +119,20 @@ const ReportModal: React.FC<ReportModalProps> = ({ map, onSubmit }) => {
             footer={null}
             destroyOnClose
         >
+            {clickedCoordinates && minimap && (
+                <div style={{ height: '200px', marginBottom: '16px' }}>
+                    <MapComponent
+                        id='minimap'
+                        map={minimap}
+                        className="minimap"
+                        style={{
+                            width: '100%',
+                            height: '100%',
+                            border: '1px solid #ddd',
+                        }}
+                    />
+                </div>
+            )}
             {isLoadingEnums ? (
                 <div style={{ textAlign: 'center', padding: '20px' }}>
                     <Spin tip="Loading..." />
