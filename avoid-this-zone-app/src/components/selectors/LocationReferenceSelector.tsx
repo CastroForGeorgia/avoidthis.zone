@@ -30,7 +30,7 @@ const LocationReferenceSelector: React.FC<LocationReferenceSelectorProps> = ({
             onChange={onChange}
             placeholder="Select location reference"
             allowClear
-            options={options.map((opt) => ({ label: t(`Enums.ALLOWED_WAS_SUCCESSFUL.${opt}`), value: opt }))}
+            options={options.map((opt) => ({ label: t(`Enums.ALLOWED_LOCATION_REFERENCE.${opt}`), value: opt }))}
         />
     );
 };

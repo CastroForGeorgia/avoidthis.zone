@@ -30,7 +30,7 @@ const WasSuccessfulSelector: React.FC<WasSuccessfulSelectorProps> = ({
             onChange={onChange}
             placeholder="Select outcome"
             allowClear
-            options={options.map((opt) => ({ label: t(`Enums.ALLOWED_TACTICS.${opt}`), value: opt }))}
+            options={options.map((opt) => ({ label: t(`Enums.ALLOWED_WAS_SUCCESSFUL.${opt}`), value: opt }))}
         />
     );
 };
