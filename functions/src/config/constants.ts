@@ -146,39 +146,40 @@ export type SourceOfInfoType = typeof ALLOWED_SOURCE_OF_INFO[number];
    * for our createRaidReport Cloud Function. No freeform text allowed.
    */
 export interface CreateRaidReportPayload {
+  coordinates: Array<{
     lat: number;
     lng: number;
-    geohash: string;
-    dateOfRaid: string; // e.g. "2025-01-16T10:00:00.000Z"
-    tacticsUsed: TacticsType[];
-    raidLocationCategory: RaidLocationCategoryType;
-    detailLocation: DetailLocationType;
-    wasSuccessful: WasSuccessfulType;
-    numberOfPeopleDetained: number;
-    locationReference: LocationReferenceType;
-    sourceOfInfo: SourceOfInfoType;
-  }
+  }>;
+  dateOfRaid: string; // e.g. "2025-01-16T10:00:00.000Z"
+  tacticsUsed: TacticsType[];
+  raidLocationCategory: RaidLocationCategoryType;
+  detailLocation: DetailLocationType;
+  wasSuccessful: WasSuccessfulType;
+  numberOfPeopleDetained: number;
+  locationReference: LocationReferenceType;
+  sourceOfInfo: SourceOfInfoType;
+}
 
 /**
    * Data shape for documents inside the 'raidReports' collection in Firestore.
    * No freeform text. All enumerations come from the above constants.
    */
 export interface RaidReportFirestoreData {
-    g: {
-      geopoint: FirebaseFirestore.GeoPoint;
-      geohash: string;
-    };
-    dateOfRaid: FirebaseFirestore.Timestamp;
-    tacticsUsed: TacticsType[];
-    raidLocationCategory: RaidLocationCategoryType;
-    detailLocation: DetailLocationType;
-    wasSuccessful: WasSuccessfulType;
-    numberOfPeopleDetained: number;
-    locationReference: LocationReferenceType;
-    sourceOfInfo: SourceOfInfoType;
-    upvoteCount: number;
-    downvoteCount: number;
-    flagCount: number;
-    createdAt: FirebaseFirestore.FieldValue;
-    updatedAt: FirebaseFirestore.FieldValue;
-  }
+  coordinates: Array<{
+    geopoint: FirebaseFirestore.GeoPoint;
+    geohash: string;
+  }>;
+  dateOfRaid: FirebaseFirestore.Timestamp;
+  tacticsUsed: TacticsType[];
+  raidLocationCategory: RaidLocationCategoryType;
+  detailLocation: DetailLocationType;
+  wasSuccessful: WasSuccessfulType;
+  numberOfPeopleDetained: number;
+  locationReference: LocationReferenceType;
+  sourceOfInfo: SourceOfInfoType;
+  upvoteCount: number;
+  downvoteCount: number;
+  flagCount: number;
+  createdAt: FirebaseFirestore.FieldValue;
+  updatedAt: FirebaseFirestore.FieldValue;
+}

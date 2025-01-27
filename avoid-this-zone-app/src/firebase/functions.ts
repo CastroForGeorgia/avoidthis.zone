@@ -10,8 +10,8 @@ export const functions: Functions = getFunctions(app);
  * Shape of your createRaidReport payload (based on server’s interface).
  */
 export interface CreateRaidReportPayload {
-    lat: number;
-    lng: number;
+    coordinates: [lat: number,
+        lng: number][]
     dateOfRaid: string;
     tacticsUsed: string[];
     raidLocationCategory: string;

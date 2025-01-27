@@ -6,8 +6,8 @@
  * and uses the Firestore Admin instance from lib/firestore.ts.
  */
 
-import {onCall, HttpsError} from "firebase-functions/v2/https";
-import {db} from "../lib/firestore";
+import { onCall, HttpsError } from "firebase-functions/v2/https";
+import { db } from "../lib/firestore";
 import * as admin from "firebase-admin";
 import * as logger from "firebase-functions/logger";
 
@@ -22,7 +22,7 @@ import {
   CreateRaidReportPayload,
   RaidReportFirestoreData,
 } from "../config/constants";
-import {geohashForLocation} from "geofire-common";
+import { geohashForLocation } from "geofire-common";
 
 /**
  * createRaidReport:
@@ -30,16 +30,29 @@ import {geohashForLocation} from "geofire-common";
  *  creates a new document in the 'raidReports' collection.
  */
 export const createRaidReport = onCall(async (request):
-Promise<{ id: string }> => {
+  Promise<{ id: string }> => {
   // Cast the incoming data to the partial shape of our payload
   const data = request.data as Partial<CreateRaidReportPayload>;
 
-  logger.info("Received createRaidReport request", {data});
+  logger.info("Received createRaidReport request", { data });
 
   // 1. Validate mandatory fields
-  if (!data.lat || !data.lng) {
-    throw new HttpsError("invalid-argument", "Missing lat, lng.");
+  if (!Array.isArray(data.coordinates) || data.coordinates.length === 0) {
+    throw new HttpsError("invalid-argument", "Missing or invalid coordinates array.");
   }
+
+  // Validate each coordinate
+  const validatedCoordinates = data.coordinates.map((coord, index) => {
+    if (
+      !Array.isArray(coord) ||
+      coord.length !== 2 ||
+      typeof coord[0] !== "number" ||
+      typeof coord[1] !== "number"
+    ) {
+      throw new HttpsError("invalid-argument", `Invalid coordinate at index ${index}.`);
+    }
+    return coord;
+  });
 
   if (!data.dateOfRaid) {
     throw new HttpsError("invalid-argument", "Missing dateOfRaid.");
@@ -47,23 +60,23 @@ Promise<{ id: string }> => {
 
   // 2. Validate arrays and enums
   if (!Array.isArray(data.tacticsUsed) ||
-      !data.tacticsUsed.every((t) => ALLOWED_TACTICS.includes(t))) {
+    !data.tacticsUsed.every((t) => ALLOWED_TACTICS.includes(t))) {
     throw new HttpsError("invalid-argument", "Invalid tacticsUsed.");
   }
 
   if (!data.raidLocationCategory ||
-      !ALLOWED_RAID_LOCATION_CATEGORY.includes(data.raidLocationCategory)) {
+    !ALLOWED_RAID_LOCATION_CATEGORY.includes(data.raidLocationCategory)) {
     throw new HttpsError("invalid-argument", "Invalid raidLocationCategory.");
   }
 
   if (!data.detailLocation ||
-      !ALLOWED_DETAIL_LOCATION.includes(data.detailLocation)) {
+    !ALLOWED_DETAIL_LOCATION.includes(data.detailLocation)) {
     throw new HttpsError("invalid-argument", "Invalid detailLocation.");
   }
 
   if (!data.wasSuccessful ||
-      !ALLOWED_WAS_SUCCESSFUL.includes(data.wasSuccessful)) {
-    throw new HttpsError("invalid-argument", "Invalid wasICESuccessful.");
+    !ALLOWED_WAS_SUCCESSFUL.includes(data.wasSuccessful)) {
+    throw new HttpsError("invalid-argument", "Invalid wasSuccessful.");
   }
 
   if (typeof data.numberOfPeopleDetained !== "number") {
@@ -72,12 +85,12 @@ Promise<{ id: string }> => {
   }
 
   if (!data.locationReference ||
-      !ALLOWED_LOCATION_REFERENCE.includes(data.locationReference)) {
+    !ALLOWED_LOCATION_REFERENCE.includes(data.locationReference)) {
     throw new HttpsError("invalid-argument", "Invalid locationReference.");
   }
 
   if (!data.sourceOfInfo ||
-      !ALLOWED_SOURCE_OF_INFO.includes(data.sourceOfInfo)) {
+    !ALLOWED_SOURCE_OF_INFO.includes(data.sourceOfInfo)) {
     throw new HttpsError("invalid-argument", "Invalid sourceOfInfo.");
   }
 
@@ -86,11 +99,13 @@ Promise<{ id: string }> => {
     admin.firestore.Timestamp.fromDate(new Date(data.dateOfRaid));
 
   // 4. Construct the Firestore data object
+  const coordinatesData = validatedCoordinates.map(([lat, lng]) => ({
+    geopoint: new admin.firestore.GeoPoint(lat, lng),
+    geohash: geohashForLocation([lat, lng]),
+  }));
+
   const reportData: RaidReportFirestoreData = {
-    g: {
-      geopoint: new admin.firestore.GeoPoint(data.lat, data.lng),
-      geohash: geohashForLocation([data.lat, data.lng]),
-    },
+    coordinates: coordinatesData, // Store the array of coordinates
     dateOfRaid: raidTimestamp,
     tacticsUsed: data.tacticsUsed,
     raidLocationCategory: data.raidLocationCategory,
@@ -108,8 +123,8 @@ Promise<{ id: string }> => {
 
   // 5. Write to Firestore
   const docRef = await db.collection("raidReports").add(reportData);
-  logger.info("Created raid report document", {docId: docRef.id});
+  logger.info("Created raid report document", { docId: docRef.id });
 
   // Return the document ID to the client
-  return {id: docRef.id};
+  return { id: docRef.id };
 });
