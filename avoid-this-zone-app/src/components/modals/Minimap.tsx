@@ -3,7 +3,6 @@ import { Feature, Map as OlMap, View } from 'ol';
 
 import MapComponent from '@terrestris/react-geo/dist/Map/MapComponent/MapComponent';
 import TileLayer from 'ol/layer/Tile';
-import { toLonLat } from 'ol/proj';
 import OSM from 'ol/source/OSM';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
