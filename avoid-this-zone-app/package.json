@@ -41,6 +41,7 @@
     "@terrestris/react-geo": "^26.2.1",
     "@terrestris/react-util": "^10.0.1",
     "@terrestris/shogun-util": "^10.2.0",
+    "@turf/turf": "^7.2.0",
     "antd": "^5.22.5",
     "dotenv": "^16.4.7",
     "firebase": "^11.2.0",

@@ -1,81 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Modal } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { Map as OlMap, View } from 'ol';
 
 import { useEnumData } from '../../hooks/useEnumData'; // Adjust the import path as needed
-import MapComponent from '@terrestris/react-geo/dist/Map/MapComponent/MapComponent';
-import TileLayer from 'ol/layer/Tile';
-import { fromLonLat } from 'ol/proj';
-import OSM from 'ol/source/OSM';
 import { EnumForm } from '../forms/EnumForm';
 import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher';
+import { Minimap } from './Minimap';
+import { generateRandomPins } from '../../utils/geoUtils';
 
 interface ReportModalProps {
     clickedCoordinates: [number, number];
     setClickedCoordinates: (coords: [number, number] | null) => void;
     onSubmit: (report: any) => void;
 }
-
-const Minimap: React.FC<{
-    coordinates: [number, number];
-}> = ({ coordinates }) => {
-    const [minimap, setMinimap] = useState<OlMap | null>(null);
-
-    useEffect(() => {
-        if (!minimap) {
-            const newMinimap = new OlMap({
-                layers: [
-                    new TileLayer({
-                        source: new OSM(),
-                    }),
-                ],
-                view: new View({
-                    center: fromLonLat([-84.388, 33.749]), // Default center
-                    zoom: 15,
-                    minZoom: 15,
-                    maxZoom: 15,
-                }),
-                controls: [],
-            });
-            setMinimap(newMinimap);
-        }
-
-        if (minimap && coordinates) {
-            minimap.getView().setCenter(coordinates);
-        }
-    }, [minimap, coordinates]);
-
-    return minimap ? (
-        <div style={{ height: '200px', marginBottom: '16px', position: 'relative' }}>
-            {/* Map Component */}
-            <MapComponent
-                id="minimap"
-                map={minimap}
-                className="minimap"
-                style={{
-                    width: '100%',
-                    height: '100%',
-                    border: '1px solid #ddd',
-                }}
-            />
-            {/* Circle Icon Overlay */}
-            <div
-                style={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    zIndex: 10, // Ensure it is on top of the map
-                    pointerEvents: 'none', // Allow interaction with the map
-                }}
-            >
-                <i className="fas fa-circle" style={{ fontSize: '48px', color: 'red' }}></i>
-            </div>
-        </div>
-    ) : null;
-};
-
 
 const ReportModal: React.FC<ReportModalProps> = ({
     clickedCoordinates,
@@ -84,13 +21,15 @@ const ReportModal: React.FC<ReportModalProps> = ({
 }) => {
     const { t } = useTranslation();
     const { enumData, isLoading, error } = useEnumData();
+    const [centerCoordinates, setCenterCoordinates] = useState<[number, number]>(clickedCoordinates);
+
     const handleCancel = () => {
         setClickedCoordinates(null);
     };
 
     const handleFormSubmit = (values: any) => {
         const report = {
-            coordinates: clickedCoordinates,
+            coordinates: generateRandomPins(centerCoordinates, 100, 5),
             ...values,
         };
         console.log(t('ReportModal.successMessage'), report);
@@ -108,7 +47,12 @@ const ReportModal: React.FC<ReportModalProps> = ({
         >
             {/* Language Switcher */}
             <LanguageSwitcher />
-            {clickedCoordinates && <Minimap coordinates={clickedCoordinates} />}
+            {clickedCoordinates && (
+                <Minimap
+                    coordinates={clickedCoordinates}
+                    onCenterChange={(newCenter) => setCenterCoordinates(newCenter)}
+                />
+            )}
             <EnumForm
                 enumData={enumData}
                 isLoading={isLoading}
