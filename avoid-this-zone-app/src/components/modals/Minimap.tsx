@@ -3,7 +3,7 @@ import { Feature, Map as OlMap, View } from 'ol';
 
 import MapComponent from '@terrestris/react-geo/dist/Map/MapComponent/MapComponent';
 import TileLayer from 'ol/layer/Tile';
-import { fromLonLat, toLonLat } from 'ol/proj';
+import { toLonLat } from 'ol/proj';
 import OSM from 'ol/source/OSM';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
@@ -68,7 +68,7 @@ export const Minimap: React.FC<{
             const handleChange = () => {
                 const center = minimap?.getView().getCenter();;
                 if (center) {
-                    onCenterChange(toLonLat(center) as [number, number]);
+                    onCenterChange(center as [number, number]);
                                 // Update the circle's center if it exists
                     if (circleFeature) {
                         const circleGeometry = circleFeature.getGeometry() as Circle;
@@ -84,22 +84,6 @@ export const Minimap: React.FC<{
         }
     }, [minimap, onCenterChange, circleFeature]);
 
-    useEffect(() => {
-        if (minimap && onCenterChange) {
-            const handleChange = () => {
-                const center = minimap?.getView().getCenter();;
-                if (center) {
-                    onCenterChange(toLonLat(center) as [number, number]);
-                }
-            };
-
-            minimap.addEventListener('moveend', handleChange)
-            return () => {
-                minimap.removeEventListener('change:view', handleChange)
-            };
-        }
-    }, [minimap, onCenterChange]);
-
     return minimap ? (
         <div style={{ height: '200px', marginBottom: '16px', position: 'relative' }}>
             <MapComponent
@@ -112,19 +96,6 @@ export const Minimap: React.FC<{
                     border: '1px solid #ddd',
                 }}
             />
-            {/* Circle Icon Overlay */}
-            {/* <div
-                style={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    zIndex: 10, // Ensure it is on top of the map
-                    pointerEvents: 'none', // Allow interaction with the map
-                }}
-            >
-                <i className="fas fa-circle" style={{ fontSize: '48px', color: 'red' }}></i>
-            </div> */}
         </div>
     ) : null;
 };
