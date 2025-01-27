@@ -146,10 +146,10 @@ export type SourceOfInfoType = typeof ALLOWED_SOURCE_OF_INFO[number];
    * for our createRaidReport Cloud Function. No freeform text allowed.
    */
 export interface CreateRaidReportPayload {
-  coordinates: Array<{
+  coordinates: {
     lat: number;
     lng: number;
-  }>;
+  };
   dateOfRaid: string; // e.g. "2025-01-16T10:00:00.000Z"
   tacticsUsed: TacticsType[];
   raidLocationCategory: RaidLocationCategoryType;

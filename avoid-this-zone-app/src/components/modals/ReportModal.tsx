@@ -6,7 +6,6 @@ import { useEnumData } from '../../hooks/useEnumData'; // Adjust the import path
 import { EnumForm } from '../forms/EnumForm';
 import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher';
 import { Minimap } from './Minimap';
-import { generateRandomPins } from '../../utils/geoUtils';
 
 interface ReportModalProps {
     clickedCoordinates: [number, number];
@@ -29,7 +28,7 @@ const ReportModal: React.FC<ReportModalProps> = ({
 
     const handleFormSubmit = (values: any) => {
         const report = {
-            coordinates: generateRandomPins(centerCoordinates, 100, 5),
+            coordinates: centerCoordinates,
             ...values,
         };
         console.log(t('ReportModal.successMessage'), report);

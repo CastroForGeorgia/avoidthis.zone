@@ -1,15 +1,8 @@
-/**
- * handlers/raidReports.ts
- *
- * Defines our Cloud Function for creating raid reports.
- * It imports enumerations and interfaces from constants.ts
- * and uses the Firestore Admin instance from lib/firestore.ts.
- */
-
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { db } from "../lib/firestore";
 import * as admin from "firebase-admin";
 import * as logger from "firebase-functions/logger";
+import { geohashForLocation } from "geofire-common";
 
 // Import enumerations and interfaces
 import {
@@ -22,43 +15,29 @@ import {
   CreateRaidReportPayload,
   RaidReportFirestoreData,
 } from "../config/constants";
-import { geohashForLocation } from "geofire-common";
+
+// Import utility for randomizing points
+import { generateRandomPins } from "../utils/geoUtils";
 
 /**
  * createRaidReport:
- *  A callable Cloud Function that validates input data, then
- *  creates a new document in the 'raidReports' collection.
+ * A callable Cloud Function that validates input data, then
+ * creates a new document in the 'raidReports' collection.
  */
-export const createRaidReport = onCall(async (request):
-  Promise<{ id: string }> => {
-  // Cast the incoming data to the partial shape of our payload
+export const createRaidReport = onCall(async (request): Promise<{ id: string }> => {
   const data = request.data as Partial<CreateRaidReportPayload>;
 
   logger.info("Received createRaidReport request", { data });
 
-  // 1. Validate mandatory fields
-  if (!Array.isArray(data.coordinates) || data.coordinates.length === 0) {
-    throw new HttpsError("invalid-argument", "Missing or invalid coordinates array.");
+  // Validate mandatory fields
+  if (!data.coordinates?.lat || !data.coordinates?.lng) {
+    throw new HttpsError("invalid-argument", "Missing or invalid coordinates.");
   }
-
-  // Validate each coordinate
-  const validatedCoordinates = data.coordinates.map((coord, index) => {
-    if (
-      !Array.isArray(coord) ||
-      coord.length !== 2 ||
-      typeof coord[0] !== "number" ||
-      typeof coord[1] !== "number"
-    ) {
-      throw new HttpsError("invalid-argument", `Invalid coordinate at index ${index}.`);
-    }
-    return coord;
-  });
 
   if (!data.dateOfRaid) {
     throw new HttpsError("invalid-argument", "Missing dateOfRaid.");
   }
 
-  // 2. Validate arrays and enums
   if (!Array.isArray(data.tacticsUsed) ||
     !data.tacticsUsed.every((t) => ALLOWED_TACTICS.includes(t))) {
     throw new HttpsError("invalid-argument", "Invalid tacticsUsed.");
@@ -80,8 +59,7 @@ export const createRaidReport = onCall(async (request):
   }
 
   if (typeof data.numberOfPeopleDetained !== "number") {
-    throw new HttpsError("invalid-argument",
-      "numberOfPeopleDetained must be a number.");
+    throw new HttpsError("invalid-argument", "numberOfPeopleDetained must be a number.");
   }
 
   if (!data.locationReference ||
@@ -94,18 +72,25 @@ export const createRaidReport = onCall(async (request):
     throw new HttpsError("invalid-argument", "Invalid sourceOfInfo.");
   }
 
-  // 3. Convert dateOfRaid to a Firestore Timestamp
-  const raidTimestamp =
-    admin.firestore.Timestamp.fromDate(new Date(data.dateOfRaid));
+  // Convert dateOfRaid to Firestore Timestamp
+  const raidTimestamp = admin.firestore.Timestamp.fromDate(new Date(data.dateOfRaid));
 
-  // 4. Construct the Firestore data object
-  const coordinatesData = validatedCoordinates.map(([lat, lng]) => ({
-    geopoint: new admin.firestore.GeoPoint(lat, lng),
-    geohash: geohashForLocation([lat, lng]),
+  // Generate random pins around the given coordinate
+  const randomizedCoordinates = generateRandomPins(
+    [data.coordinates.lat, data.coordinates.lng],
+    100, // Radius in meters
+    5 // Number of random points
+  );
+
+  // Convert randomized coordinates to Firestore format
+  const coordinatesData = randomizedCoordinates.map(({ lat, lon }) => ({
+    geopoint: new admin.firestore.GeoPoint(lat, lon),
+    geohash: geohashForLocation([lat, lon]),
   }));
 
+  // Construct Firestore data object
   const reportData: RaidReportFirestoreData = {
-    coordinates: coordinatesData, // Store the array of coordinates
+    coordinates: coordinatesData, // Store the array of randomized coordinates
     dateOfRaid: raidTimestamp,
     tacticsUsed: data.tacticsUsed,
     raidLocationCategory: data.raidLocationCategory,
@@ -121,10 +106,9 @@ export const createRaidReport = onCall(async (request):
     updatedAt: admin.firestore.FieldValue.serverTimestamp(),
   };
 
-  // 5. Write to Firestore
+  // Write to Firestore
   const docRef = await db.collection("raidReports").add(reportData);
   logger.info("Created raid report document", { docId: docRef.id });
 
-  // Return the document ID to the client
   return { id: docRef.id };
 });
