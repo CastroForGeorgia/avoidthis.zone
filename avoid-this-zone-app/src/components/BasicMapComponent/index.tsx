@@ -49,7 +49,6 @@ export const BasicMapComponent: React.FC<Partial<MapComponentProps>> = (props): 
       <MapComponent map={map} {...props} />
       {clickedCoordinates && (
         <ReportModal
-          map={map}
           clickedCoordinates={clickedCoordinates}
           setClickedCoordinates={setClickedCoordinates}
           onSubmit={(report: any) => console.log('Submitted Report:', report)}

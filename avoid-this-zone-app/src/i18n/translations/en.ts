@@ -40,7 +40,7 @@ export default {
                 tactics: 'Tactics',
                 raidLocationCategory: 'Raid Location Category',
                 detailLocation: 'Detail Location',
-                wasSuccessful: 'Was the operation successful?',
+                wasSuccessful: 'Was anyone detained?',
                 locationReference: 'Location Reference',
                 sourceOfInfo: 'Source of Information',
             },
