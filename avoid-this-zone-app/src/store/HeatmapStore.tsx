@@ -42,8 +42,8 @@ export const HeatmapStoreProvider: React.FC<HeatmapStoreProviderProps> = ({ chil
     const source = new VectorSource();
     const layer = new HeatmapLayer({
       source: source,
-      blur: 15,
-      radius: 10,
+      blur: 1,
+      radius: 4,
       weight: (feature) => feature.get('weight') || 1,
       gradient: ['#00f', '#0ff', '#0f0', '#ff0', '#f00'], // Customize as needed
       properties: { name: 'Heatmap Layer' },
@@ -65,7 +65,7 @@ export const HeatmapStoreProvider: React.FC<HeatmapStoreProviderProps> = ({ chil
 
         const feature = new Feature({
           geometry: new Point(fromLonLat([latitude, longitude])),
-          weight: 1,
+          weight: .5,
         });
     
         setFeatures((prev) => [...prev, feature]);

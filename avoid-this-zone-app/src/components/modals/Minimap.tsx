@@ -26,16 +26,16 @@ export const Minimap: React.FC<{
                 ],
                 view: new View({
                     center: coordinates, // Default center
-                    zoom: 15,
-                    minZoom: 15,
-                    maxZoom: 15,
+                    zoom: 18,
+                    minZoom: 18,
+                    maxZoom: 18,
                 }),
                 controls: [],
             });
 
             // Create the circle feature and style
             const newCircleFeature = new Feature({
-                geometry: new Circle(coordinates, 100), // Initial center and radius
+                geometry: new Circle(coordinates, 50), // Initial center and radius
             });
             newCircleFeature.setStyle(
                 new Style({

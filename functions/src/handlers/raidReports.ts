@@ -73,8 +73,8 @@ export const createRaidReport = onCall(async (request): Promise<{ id: string }> 
   // Generate random pins around the given coordinate
   const randomizedCoordinates = generateRandomPins(
     [data.coordinates.lat, data.coordinates.lng],
-    100, // Radius in meters
-    5 // Number of random points
+    10, // Radius in meters
+    1 // Number of random points
   );
 
   // Convert randomized coordinates to Firestore format
