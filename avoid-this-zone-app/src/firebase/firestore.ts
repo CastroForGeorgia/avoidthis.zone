@@ -1,4 +1,4 @@
-import { getFirestore, doc, getDoc, Firestore, connectFirestoreEmulator } from "firebase/firestore";
+import { getFirestore, doc, getDoc, Firestore, connectFirestoreEmulator, collection, getDocs, limit, orderBy, query, Timestamp } from "firebase/firestore";
 import { app } from "./app";
 
 export const db: Firestore = getFirestore(app);
@@ -10,6 +10,29 @@ if (process.env.NODE_ENV === "development") {
     connectFirestoreEmulator(db, "127.0.0.1", 9000);
 }
 
+export interface RaidReportFirestoreData {
+    coordinates: Array<{
+      geopoint: {
+        latitude: number;
+        longitude: number;
+      };
+      geohash: string;
+    }>;
+    dateOfRaid?: Timestamp | null;
+    tacticsUsed: string[];
+    raidLocationCategory: string;
+    detailLocation: string;
+    wasSuccessful: string;
+    numberOfPeopleDetained: number;
+    locationReference: string;
+    sourceOfInfo: string;
+    upvoteCount: number;
+    downvoteCount: number;
+    flagCount: number;
+    createdAt: Timestamp;
+    updatedAt: Timestamp;
+  }
+  
 /**
  * Module-level cache for enum values.
  * This will last for as long as your app (page) remains loaded.
@@ -48,3 +71,57 @@ export const fetchEnumValues = async (): Promise<Record<string, any> | null> => 
         return null;
     }
 };
+
+/**
+ * Fetches raid reports from Firestore.
+ * 
+ * @param limitNumber - The maximum number of raid reports to retrieve.
+ * @returns An array of RaidReportFirestoreData objects.
+ */
+export const fetchRaidReports = async (
+    limitNumber: number = 100
+  ): Promise<RaidReportFirestoreData[]> => {
+    try {
+      // Reference to the 'raidReports' collection
+      const raidReportsRef = collection(db, "raidReports");
+  
+      // Create a query against the collection
+      const q = query(raidReportsRef, orderBy("createdAt", "desc"), limit(limitNumber));
+  
+      // Execute the query
+      const querySnapshot = await getDocs(q);
+  
+      // Map the documents to the RaidReportFirestoreData interface
+      const raidReports: RaidReportFirestoreData[] = querySnapshot.docs.map((doc) => {
+        const data = doc.data();
+  
+        return {
+          coordinates: data.coordinates.map((coord: any) => ({
+            geopoint: {
+              latitude: coord.geopoint.latitude,
+              longitude: coord.geopoint.longitude,
+            },
+            geohash: coord.geohash,
+          })),
+          dateOfRaid: data.dateOfRaid || null,
+          tacticsUsed: data.tacticsUsed,
+          raidLocationCategory: data.raidLocationCategory,
+          detailLocation: data.detailLocation,
+          wasSuccessful: data.wasSuccessful,
+          numberOfPeopleDetained: data.numberOfPeopleDetained,
+          locationReference: data.locationReference,
+          sourceOfInfo: data.sourceOfInfo,
+          upvoteCount: data.upvoteCount,
+          downvoteCount: data.downvoteCount,
+          flagCount: data.flagCount,
+          createdAt: data.createdAt,
+          updatedAt: data.updatedAt,
+        };
+      });
+  
+      return raidReports;
+    } catch (error) {
+      console.error("Error fetching raid reports:", error);
+      throw error;
+    }
+  };
