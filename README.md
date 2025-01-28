@@ -145,7 +145,6 @@ README.md                    // You're reading this now
 - **`raidLocationCategory`**: “Home,” “Public,” “Work,” or “Other.”  
 - **`detailLocation`**: “Street,” “CarStop,” “Shelter,” “Workplace,” etc.  
 - **`wasICESuccessful`**: “Yes,” “No,” or “Unknown.”  
-- **`numberOfPeopleDetained`**: Numeric.  
 - **`locationReference`**: “ZIP,” “ADDRESS,” “INTERSECTION,” or “NONE.”  
 - **`sourceOfInfo`**: “NewsArticle,” “PersonalObservation,” etc.  
 - **`upvoteCount`, `downvoteCount`, `flagCount`**: Community feedback.  
@@ -201,7 +200,6 @@ async function submitRaidReport() {
       raidLocationCategory: "Home",
       detailLocation: "CarStop",
       wasICESuccessful: "Unknown",
-      numberOfPeopleDetained: 0,
       locationReference: "ZIP",
       sourceOfInfo: "PersonalObservation"
     });

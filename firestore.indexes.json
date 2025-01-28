@@ -25,10 +25,6 @@
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "numberOfPeopleDetained",
-          "order": "ASCENDING"
-        },
-        {
           "fieldPath": "locationReference",
           "order": "ASCENDING"
         },

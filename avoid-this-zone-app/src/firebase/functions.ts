@@ -1,23 +1,29 @@
-import { getFunctions, httpsCallable, Functions } from "firebase/functions";
+import { getFunctions, httpsCallable, Functions, connectFunctionsEmulator } from "firebase/functions";
 import { app } from "./app";
 
 /**
  * Cloud Functions instance
  */
 export const functions: Functions = getFunctions(app);
+// Check if in development mode
+if (process.env.NODE_ENV === "development") {
+    console.log("Connecting to Firebase emulators...");
+    connectFunctionsEmulator(functions, "127.0.0.1", 4001);
+}
 
 /**
  * Shape of your createRaidReport payload (based on server’s interface).
  */
 export interface CreateRaidReportPayload {
-    coordinates: [lat: number,
-        lng: number][]
+    coordinates: {
+        lat: number;
+        lng: number;
+      };
     dateOfRaid: string;
     tacticsUsed: string[];
     raidLocationCategory: string;
     detailLocation: string;
     wasSuccessful: string;
-    numberOfPeopleDetained: number;
     locationReference: string;
     sourceOfInfo: string;
 }

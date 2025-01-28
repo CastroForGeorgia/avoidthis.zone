@@ -2,7 +2,8 @@ import {
     getAuth,
     signInAnonymously,
     onAuthStateChanged,
-    User
+    User,
+    connectAuthEmulator
 } from "firebase/auth";
 import { app } from "./app";
 
@@ -10,6 +11,16 @@ import { app } from "./app";
  * Auth instance from initialized Firebase app
  */
 export const auth = getAuth(app);
+
+// Check if in development mode
+if (process.env.NODE_ENV === "development") {
+    console.log("Connecting to Firebase emulators...");
+
+    // Connect Authentication Emulator
+    connectAuthEmulator(auth, "http://127.0.0.1:9099", {
+        disableWarnings: true,
+    });
+}
 
 /**
  * signInAnonymouslyIfNeeded:

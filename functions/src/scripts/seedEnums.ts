@@ -1,5 +1,6 @@
 /**
  * scripts/seedEnums.ts
+ * GOOGLE_APPLICATION_CREDENTIALS=$HOME/.config/gcloud/application_default_credentials.json FIRESTORE_EMULATOR_HOST=127.0.0.1:9000 ts-node src/scripts/seedEnums.ts
  *
  * This script seeds the "config/enums" document in Firestore
  * with all allowed enumerations, so front-end clients (and any other
@@ -13,7 +14,7 @@ import * as admin from "firebase-admin";
 //    For the emulator, it might just pick up your local credentials automatically.
 admin.initializeApp(
   {
-    projectId: "avoidthiszone"
+    projectId: "avoidthiszone",
   });
 
 // 2. Reference Firestore
@@ -27,7 +28,7 @@ import {
   ALLOWED_DETAIL_LOCATION,
   ALLOWED_WAS_SUCCESSFUL,
   ALLOWED_LOCATION_REFERENCE,
-  ALLOWED_SOURCE_OF_INFO
+  ALLOWED_SOURCE_OF_INFO,
 } from "../config/constants";
 
 // 4. The main async function to run
@@ -44,7 +45,7 @@ async function seedEnums() {
     };
 
     // Write the data to "config/enums"
-    await db.collection("config").doc("enums").set(data, { merge: true });
+    await db.collection("config").doc("enums").set(data, {merge: true});
 
     console.log("Successfully seeded enums into Firestore at config/enums");
   } catch (error) {

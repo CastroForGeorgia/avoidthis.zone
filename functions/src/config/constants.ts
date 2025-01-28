@@ -155,7 +155,6 @@ export interface CreateRaidReportPayload {
   raidLocationCategory: RaidLocationCategoryType;
   detailLocation: DetailLocationType;
   wasSuccessful: WasSuccessfulType;
-  numberOfPeopleDetained: number;
   locationReference: LocationReferenceType;
   sourceOfInfo: SourceOfInfoType;
 }
@@ -169,12 +168,11 @@ export interface RaidReportFirestoreData {
     geopoint: FirebaseFirestore.GeoPoint;
     geohash: string;
   }>;
-  dateOfRaid: FirebaseFirestore.Timestamp;
+  dateOfRaid: FirebaseFirestore.Timestamp | null;
   tacticsUsed: TacticsType[];
   raidLocationCategory: RaidLocationCategoryType;
   detailLocation: DetailLocationType;
   wasSuccessful: WasSuccessfulType;
-  numberOfPeopleDetained: number;
   locationReference: LocationReferenceType;
   sourceOfInfo: SourceOfInfoType;
   upvoteCount: number;

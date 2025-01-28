@@ -1,7 +1,14 @@
-import { getFirestore, doc, getDoc, Firestore } from "firebase/firestore";
+import { getFirestore, doc, getDoc, Firestore, connectFirestoreEmulator } from "firebase/firestore";
 import { app } from "./app";
 
 export const db: Firestore = getFirestore(app);
+// Check if in development mode
+if (process.env.NODE_ENV === "development") {
+    console.log("Connecting to Firebase emulators...");
+
+    // Connect Firestore Emulator
+    connectFirestoreEmulator(db, "127.0.0.1", 9000);
+}
 
 /**
  * Module-level cache for enum values.

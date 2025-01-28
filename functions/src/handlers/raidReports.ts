@@ -1,8 +1,8 @@
-import { onCall, HttpsError } from "firebase-functions/v2/https";
-import { db } from "../lib/firestore";
+import {onCall, HttpsError} from "firebase-functions/v2/https";
+import {db} from "../lib/firestore";
 import * as admin from "firebase-admin";
 import * as logger from "firebase-functions/logger";
-import { geohashForLocation } from "geofire-common";
+import {geohashForLocation} from "geofire-common";
 
 // Import enumerations and interfaces
 import {
@@ -17,7 +17,8 @@ import {
 } from "../config/constants";
 
 // Import utility for randomizing points
-import { generateRandomPins } from "../utils/geoUtils";
+import {generateRandomPins} from "../utils/geoUtils";
+import { FieldValue, GeoPoint } from "firebase-admin/firestore";
 
 /**
  * createRaidReport:
@@ -27,15 +28,11 @@ import { generateRandomPins } from "../utils/geoUtils";
 export const createRaidReport = onCall(async (request): Promise<{ id: string }> => {
   const data = request.data as Partial<CreateRaidReportPayload>;
 
-  logger.info("Received createRaidReport request", { data });
+  logger.info("Received createRaidReport request", {data});
 
   // Validate mandatory fields
   if (!data.coordinates?.lat || !data.coordinates?.lng) {
     throw new HttpsError("invalid-argument", "Missing or invalid coordinates.");
-  }
-
-  if (!data.dateOfRaid) {
-    throw new HttpsError("invalid-argument", "Missing dateOfRaid.");
   }
 
   if (!Array.isArray(data.tacticsUsed) ||
@@ -58,10 +55,6 @@ export const createRaidReport = onCall(async (request): Promise<{ id: string }> 
     throw new HttpsError("invalid-argument", "Invalid wasSuccessful.");
   }
 
-  if (typeof data.numberOfPeopleDetained !== "number") {
-    throw new HttpsError("invalid-argument", "numberOfPeopleDetained must be a number.");
-  }
-
   if (!data.locationReference ||
     !ALLOWED_LOCATION_REFERENCE.includes(data.locationReference)) {
     throw new HttpsError("invalid-argument", "Invalid locationReference.");
@@ -73,7 +66,9 @@ export const createRaidReport = onCall(async (request): Promise<{ id: string }> 
   }
 
   // Convert dateOfRaid to Firestore Timestamp
-  const raidTimestamp = admin.firestore.Timestamp.fromDate(new Date(data.dateOfRaid));
+  const raidTimestamp = data.dateOfRaid
+    ? admin.firestore.Timestamp.fromDate(new Date(data.dateOfRaid))
+    : null;
 
   // Generate random pins around the given coordinate
   const randomizedCoordinates = generateRandomPins(
@@ -83,8 +78,8 @@ export const createRaidReport = onCall(async (request): Promise<{ id: string }> 
   );
 
   // Convert randomized coordinates to Firestore format
-  const coordinatesData = randomizedCoordinates.map(({ lat, lon }) => ({
-    geopoint: new admin.firestore.GeoPoint(lat, lon),
+  const coordinatesData = randomizedCoordinates.map(({lat, lon}) => ({
+    geopoint: new GeoPoint(lat, lon),
     geohash: geohashForLocation([lat, lon]),
   }));
 
@@ -96,19 +91,18 @@ export const createRaidReport = onCall(async (request): Promise<{ id: string }> 
     raidLocationCategory: data.raidLocationCategory,
     detailLocation: data.detailLocation,
     wasSuccessful: data.wasSuccessful,
-    numberOfPeopleDetained: data.numberOfPeopleDetained,
     locationReference: data.locationReference,
     sourceOfInfo: data.sourceOfInfo,
     upvoteCount: 0,
     downvoteCount: 0,
     flagCount: 0,
-    createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    createdAt: FieldValue.serverTimestamp(),
+    updatedAt: FieldValue.serverTimestamp(),
   };
 
   // Write to Firestore
   const docRef = await db.collection("raidReports").add(reportData);
-  logger.info("Created raid report document", { docId: docRef.id });
+  logger.info("Created raid report document", {docId: docRef.id});
 
-  return { id: docRef.id };
+  return {id: docRef.id};
 });

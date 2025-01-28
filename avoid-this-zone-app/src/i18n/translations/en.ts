@@ -35,6 +35,7 @@ export default {
             resetButton: 'Reset',
             formErrors: {
                 requiredField: 'This field is required.',
+                invalidDate: "This date is invalid."
             },
             labels: {
                 tactics: 'Tactics',
@@ -43,6 +44,7 @@ export default {
                 wasSuccessful: 'Was anyone detained?',
                 locationReference: 'Location Reference',
                 sourceOfInfo: 'Source of Information',
+                dateOfRaid: '(Optional) Date'
             },
         },
         Enums: {

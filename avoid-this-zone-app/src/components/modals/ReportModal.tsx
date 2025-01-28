@@ -6,6 +6,8 @@ import { useEnumData } from '../../hooks/useEnumData'; // Adjust the import path
 import { EnumForm } from '../forms/EnumForm';
 import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher';
 import { Minimap } from './Minimap';
+import { createRaidReport } from '../../firebase';
+import { Coordinate } from 'ol/coordinate';
 
 interface ReportModalProps {
     clickedCoordinates: [number, number];
@@ -20,17 +22,18 @@ const ReportModal: React.FC<ReportModalProps> = ({
 }) => {
     const { t } = useTranslation();
     const { enumData, isLoading, error } = useEnumData();
-    const [centerCoordinates, setCenterCoordinates] = useState<[number, number]>(clickedCoordinates);
+    const [centerCoordinates, setCenterCoordinates] = useState<Coordinate>(clickedCoordinates);
 
     const handleCancel = () => {
         setClickedCoordinates(null);
     };
 
-    const handleFormSubmit = (values: any) => {
+    const handleFormSubmit = async (values: any) => {
         const report = {
-            coordinates: centerCoordinates,
+            coordinates: { lng: centerCoordinates[0], lat: centerCoordinates[1] },
             ...values,
         };
+        await createRaidReport(report)
         console.log(t('ReportModal.successMessage'), report);
         onSubmit(report);
         setClickedCoordinates(null);

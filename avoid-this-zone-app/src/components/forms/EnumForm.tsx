@@ -7,6 +7,7 @@ import RaidLocationCategorySelector from "../selectors/RaidLocationCategorySelec
 import SourceOfInfoSelector from "../selectors/SourceOfInfoSelector";
 import TacticsSelector from "../selectors/TacticsSelector";
 import WasSuccessfulSelector from "../selectors/WasSuccessfulSelector";
+import DatePicker from "antd/lib/date-picker";
 
 export const EnumForm: React.FC<{
     enumData: Record<string, any> | null;
@@ -59,7 +60,7 @@ export const EnumForm: React.FC<{
         >
             <Form.Item
                 label={t("ReportModal.labels.tactics")}
-                name="tactics"
+                name="tacticsUsed"
                 rules={[
                     {
                         required: true,
@@ -133,6 +134,20 @@ export const EnumForm: React.FC<{
                 ]}
             >
                 <SourceOfInfoSelector options={enumData.ALLOWED_SOURCE_OF_INFO} />
+            </Form.Item>
+
+            <Form.Item
+                label={t("ReportModal.labels.dateOfRaid")}
+                name="dateOfRaid"
+                rules={[
+                    // No 'required' rule means the field is optional
+                    {
+                        type: "object",
+                        message: t("ReportModal.formErrors.invalidDate"),
+                    },
+                ]}
+            >
+                <DatePicker style={{ width: "100%" }} />
             </Form.Item>
 
             <div
