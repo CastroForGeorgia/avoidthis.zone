@@ -23,10 +23,10 @@ import App from './App';
 import i18n from './i18n';
 import { store } from './store/store';
 import './index.less';
-import { FeatureStoreProvider } from './store/FeatureStore';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { bbox } from 'ol/loadingstrategy';
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import { HeatmapStoreProvider } from './store/HeatmapStore';
 
 // ----------------------------------
 // 1) The function that creates and configures our default map with dynamic loading
@@ -158,7 +158,7 @@ async function renderApp() {
             <ConfigProvider locale={getConfigLang(i18n.language)}>
               <ReduxProvider store={store}>
                 <MapContext.Provider value={map}>
-                  <FeatureStoreProvider>
+                <HeatmapStoreProvider map={map}>
                     <Helmet>
                       <html lang={i18n.language} />
                       <title>Avoid This Zone - ICE Activity Tracker for Georgia</title>
@@ -187,7 +187,7 @@ async function renderApp() {
                       <link rel="canonical" href="https://avoidthis.zone" />
                     </Helmet>
                     <App />
-                  </FeatureStoreProvider>
+                  </HeatmapStoreProvider>
                 </MapContext.Provider>
               </ReduxProvider>
             </ConfigProvider>
