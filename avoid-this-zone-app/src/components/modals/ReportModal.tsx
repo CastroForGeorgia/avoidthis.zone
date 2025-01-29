@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal } from 'antd';
+import { Modal, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { useEnumData } from '../../hooks/useEnumData'; // Adjust the import path as needed
@@ -24,29 +24,35 @@ const ReportModal: React.FC<ReportModalProps> = ({
     const { t } = useTranslation();
     const { enumData, isLoading, error } = useEnumData();
     const [centerCoordinates, setCenterCoordinates] = useState<Coordinate>(clickedCoordinates);
+    const [submitting, setSubmitting] = useState(false);
 
     const handleCancel = () => {
         setClickedCoordinates(null);
     };
 
     const handleFormSubmit = async (values: any) => {
-        // Transform the clicked coordinates to WGS84 if necessary
-        // Assuming clickedCoordinates are in EPSG:3857, convert to EPSG:4326
-        const transformedCoordinates = toLonLat(centerCoordinates) as [number, number];
-        // If clickedCoordinates are already in EPSG:4326, skip transformation
-        // const transformedCoordinates = clickedCoordinates;
+        setSubmitting(true);
+        try {
+            // Transform the clicked coordinates to WGS84 if necessary
+            const transformedCoordinates = toLonLat(centerCoordinates) as [number, number];
 
-        const report = {
-            coordinates: { 
-                lng: transformedCoordinates[0], // Longitude
-                lat: transformedCoordinates[1], // Latitude
-            },
-            ...values,
-        };
-        await createRaidReport(report)
-        console.log(t('ReportModal.successMessage'), report);
-        onSubmit(report);
-        setClickedCoordinates(null);
+            const report = {
+                coordinates: {
+                    lng: transformedCoordinates[0], // Longitude
+                    lat: transformedCoordinates[1], // Latitude
+                },
+                ...values,
+            };
+
+            await createRaidReport(report);
+            console.log(t('ReportModal.successMessage'), report);
+            onSubmit(report);
+            setClickedCoordinates(null);
+        } catch (error) {
+            console.error('Error submitting report:', error);
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     return (
@@ -57,7 +63,6 @@ const ReportModal: React.FC<ReportModalProps> = ({
             footer={null}
             destroyOnClose
         >
-            {/* Language Switcher */}
             <LanguageSwitcher />
             {clickedCoordinates && (
                 <Minimap
@@ -65,13 +70,19 @@ const ReportModal: React.FC<ReportModalProps> = ({
                     onCenterChange={(newCenter) => setCenterCoordinates(newCenter)}
                 />
             )}
-            <EnumForm
-                enumData={enumData}
-                isLoading={isLoading}
-                error={error}
-                onSubmit={handleFormSubmit}
-                onCancel={handleCancel}
-            />
+            {submitting ? (
+                <div style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>
+                    <Spin size="large" />
+                </div>
+            ) : (
+                <EnumForm
+                    enumData={enumData}
+                    isLoading={isLoading}
+                    error={error}
+                    onSubmit={handleFormSubmit}
+                    onCancel={handleCancel}
+                />
+            )}
         </Modal>
     );
 };

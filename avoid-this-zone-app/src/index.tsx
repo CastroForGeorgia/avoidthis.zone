@@ -1,7 +1,7 @@
 // src/index.ts
 
-import React from 'react';
-import { Alert } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Alert, Spin } from 'antd';
 import ConfigProvider from 'antd/lib/config-provider';
 import enUS from 'antd/lib/locale/en_US';
 import { defaults as OlControlDefaults } from 'ol/control';
@@ -27,6 +27,7 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { bbox } from 'ol/loadingstrategy';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { HeatmapStoreProvider } from './store/HeatmapStore';
+import { signInAnonymouslyIfNeeded } from './firebase';
 
 // ----------------------------------
 // 1) The function that creates and configures our default map with dynamic loading
@@ -136,81 +137,92 @@ const getConfigLang = (lang: string) => enUS;
 // ----------------------------------
 // 2) The main render function
 // ----------------------------------
-async function renderApp() {
+const AppLoader = () => {
+  const [loading, setLoading] = useState(true);
+  const [map, setMap] = useState<OlMap | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const initializeApp = async () => {
+      try {
+        await signInAnonymouslyIfNeeded(); // Authenticate the user
+        const loadedMap = await setupMap(); // Load the map
+        setMap(loadedMap);
+      } catch (err) {
+        Logger.error("Error initializing app:", err);
+        setError("Failed to load application. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initializeApp();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <Spin size="large" tip="Initializing application..." />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <Alert
+        className="error-boundary"
+        message="Application Error"
+        description={error}
+        type="error"
+        showIcon
+      />
+    );
+  }
+
+  return (
+    <React.StrictMode>
+      <HelmetProvider>
+        <ConfigProvider locale={enUS}>
+          <ReduxProvider store={store}>
+            <MapContext.Provider value={map}>
+              <HeatmapStoreProvider map={map}>
+                <Helmet>
+                  <html lang={i18n.language} />
+                  <title>Avoid This Zone - ICE Activity Tracker for Georgia</title>
+                  <meta name="description" content="Stay informed with 'Avoid This Zone,' an interactive map tracking ICE activity and providing safety alerts across Georgia. Protect your community today." />
+                  <meta name="keywords" content="Georgia ICE tracker, ICE activity map, avoid ICE zones, community safety, Georgia heatmap, local immigration alerts, interactive map, OpenLayers, React" />
+                  <meta name="author" content="Andres Castro" />
+                  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                  <meta property="og:title" content="Avoid This Zone - ICE Activity Tracker for Georgia" />
+                  <meta property="og:description" content="Explore ICE activity and safety zones on an interactive map tailored for Georgia residents. Stay safe and protect your community." />
+                  <meta property="og:image" content="path/to/your/optimized-image.png" />
+                  <meta property="og:image:alt" content="Screenshot of the Avoid This Zone map highlighting ICE activity areas in Georgia." />
+                  <meta property="og:type" content="website" />
+                  <meta property="og:url" content="https://avoidthis.zone" />
+                  <link rel="canonical" href="https://avoidthis.zone" />
+                </Helmet>
+                <App />
+              </HeatmapStoreProvider>
+            </MapContext.Provider>
+          </ReduxProvider>
+        </ConfigProvider>
+      </HelmetProvider>
+    </React.StrictMode>
+  );
+};
+
+// ----------------------------------
+// 2) The main render function
+// ----------------------------------
+function renderApp() {
   const container = document.getElementById('app');
   if (!container) {
     Logger.error('Could not find container element with ID "app"');
     return;
   }
 
-  // 1) Create a React root
   const root = createRoot(container);
-
-  try {
-    // 2) Setup our OpenLayers map
-    const map = await setupMap();
-
-    // 3) Render our React app, providing the map through MapContext
-    root.render(
-      <React.StrictMode>
-        <React.Suspense fallback={<span></span>}>
-          <HelmetProvider>
-            <ConfigProvider locale={getConfigLang(i18n.language)}>
-              <ReduxProvider store={store}>
-                <MapContext.Provider value={map}>
-                <HeatmapStoreProvider map={map}>
-                    <Helmet>
-                      <html lang={i18n.language} />
-                      <title>Avoid This Zone - ICE Activity Tracker for Georgia</title>
-                      <meta
-                        name="description"
-                        content="Stay informed with 'Avoid This Zone,' an interactive map tracking ICE activity and providing safety alerts across Georgia. Protect your community today."
-                      />
-                      <meta
-                        name="keywords"
-                        content="Georgia ICE tracker, ICE activity map, avoid ICE zones, community safety, Georgia heatmap, local immigration alerts, interactive map, OpenLayers, React"
-                      />
-                      <meta name="author" content="Andres Castro" />
-                      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-                      <meta property="og:title" content="Avoid This Zone - ICE Activity Tracker for Georgia" />
-                      <meta
-                        property="og:description"
-                        content="Explore ICE activity and safety zones on an interactive map tailored for Georgia residents. Stay safe and protect your community."
-                      />
-                      <meta property="og:image" content="path/to/your/optimized-image.png" />
-                      <meta
-                        property="og:image:alt"
-                        content="Screenshot of the Avoid This Zone map highlighting ICE activity areas in Georgia."
-                      />
-                      <meta property="og:type" content="website" />
-                      <meta property="og:url" content="https://avoidthis.zone" />
-                      <link rel="canonical" href="https://avoidthis.zone" />
-                    </Helmet>
-                    <App />
-                  </HeatmapStoreProvider>
-                </MapContext.Provider>
-              </ReduxProvider>
-            </ConfigProvider>
-          </HelmetProvider>
-        </React.Suspense>
-      </React.StrictMode>
-    );
-  } catch (error) {
-    Logger.error(error);
-
-    // Fallback UI in case the map creation or anything else fails
-    root.render(
-      <React.StrictMode>
-        <Alert
-          className="error-boundary"
-          message={i18n.t('Index.errorMessage')}
-          description={i18n.t('Index.errorDescription')}
-          type="error"
-          showIcon
-        />
-      </React.StrictMode>
-    );
-  }
+  root.render(<AppLoader />);
 }
 
 renderApp();

@@ -84,7 +84,7 @@ module.exports = {
       filename: 'index.html',
       template: path.join(__dirname, 'resources', 'template', 'index.ejs'),
       templateParameters: {
-        title: 'Hello World',
+        title: 'Avoid This Zone',
         appPrefix: process.env.HTML_BASE_URL ?? ''
       },
       favicon: path.join(__dirname, 'resources', 'public', 'favicon.ico'),

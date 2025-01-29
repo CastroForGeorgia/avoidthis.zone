@@ -1,19 +1,13 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import BasicMapComponent from './components/BasicMapComponent';
 import SideDrawer from './components/SideDrawer';
 import ToggleDrawerButton from './components/ToggleDrawerButton';
 
 import { useAppSelector } from './hooks/useAppSelector';
-import { signInAnonymouslyIfNeeded } from './firebase';
 import './App.less';
 
 export const App: React.FC = (): JSX.Element => {
   const isDrawerVisible = useAppSelector((state) => state.drawer.visible);
-
-  useEffect(() => {
-    // Attempt to sign in the user anonymously on mount
-    signInAnonymouslyIfNeeded();
-  }, []);
 
   return (
     <div className="App">
