@@ -1,6 +1,7 @@
 /**
- * scripts/seedEnums.ts
- * GOOGLE_APPLICATION_CREDENTIALS=$HOME/.config/gcloud/application_default_credentials.json FIRESTORE_EMULATOR_HOST=127.0.0.1:9000 ts-node src/scripts/seedEnums.ts
+ * scripts/seedEnums.ts GOOGLE_APPLICATION_CREDENTIALS=$HOME/.config/gcloud/
+ * GOOGLE_APPLICATION_CREDENTIALS=$HOME/.config/gcloud/application_default_credentials.json
+ * FIRESTORE_EMULATOR_HOST=127.0.0.1:9000 ts-node src/scripts/seedEnums.ts
  *
  * This script seeds the "config/enums" document in Firestore
  * with all allowed enumerations, so front-end clients (and any other
@@ -10,11 +11,13 @@
 import * as admin from "firebase-admin";
 
 // 1. If you haven't already, ensure you have a service account or
-//    default credentials. For local, you might set the GOOGLE_APPLICATION_CREDENTIALS env var.
-//    For the emulator, it might just pick up your local credentials automatically.
+//    default credentials. For local, you might set the
+//    GOOGLE_APPLICATION_CREDENTIALS env var.
+//    For the emulator, it might just pick up your
+//    local credentials automatically.
 admin.initializeApp(
   {
-    projectId: "avoidthiszone",
+    projectId: "avoidthiszone-51245",
   });
 
 // 2. Reference Firestore
@@ -31,13 +34,17 @@ import {
   ALLOWED_SOURCE_OF_INFO,
 } from "../config/constants";
 
-// 4. The main async function to run
+/**
+ * seedEnums:
+ * Seeds database enums
+ */
 async function seedEnums() {
   try {
     // Prepare the data object
     const data = {
       ALLOWED_TACTICS: Array.from(ALLOWED_TACTICS),
-      ALLOWED_RAID_LOCATION_CATEGORY: Array.from(ALLOWED_RAID_LOCATION_CATEGORY),
+      ALLOWED_RAID_LOCATION_CATEGORY:
+        Array.from(ALLOWED_RAID_LOCATION_CATEGORY),
       ALLOWED_DETAIL_LOCATION: Array.from(ALLOWED_DETAIL_LOCATION),
       ALLOWED_WAS_SUCCESSFUL: Array.from(ALLOWED_WAS_SUCCESSFUL),
       ALLOWED_LOCATION_REFERENCE: Array.from(ALLOWED_LOCATION_REFERENCE),

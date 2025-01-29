@@ -9,7 +9,8 @@ export const generateRandomPins = (
   const radiusInKilometers = radius / 1000;
 
   // Create a circular polygon using Turf.js
-  const circle = turf.circle(center, radiusInKilometers, { steps: 64, units: "kilometers" });
+  const circle = turf.circle(center, radiusInKilometers,
+    {steps: 64, units: "kilometers"});
 
   const bbox = turf.bbox(circle); // Bounding box of the circle
 
@@ -17,14 +18,15 @@ export const generateRandomPins = (
 
   while (result.length < count) {
     // Generate a batch of random points
-    const points = turf.randomPoint(count, { bbox });
+    const points = turf.randomPoint(count, {bbox});
 
     // Filter points to ensure they are within the circle
     const filteredPoints = points.features.filter((point) =>
       turf.booleanPointInPolygon(point, circle)
     );
 
-    // Convert filtered points to lat/lon format and add to the result
+    // Convert filtered points to
+    // lat/lon format and add to the result
     result.push(
       ...filteredPoints.map((feature) => ({
         lat: feature.geometry.coordinates[1],

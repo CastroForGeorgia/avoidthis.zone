@@ -18,14 +18,15 @@ import {
 
 // Import utility for randomizing points
 import {generateRandomPins} from "../utils/geoUtils";
-import { FieldValue, GeoPoint } from "firebase-admin/firestore";
+import {FieldValue, GeoPoint} from "firebase-admin/firestore";
 
 /**
  * createRaidReport:
  * A callable Cloud Function that validates input data, then
  * creates a new document in the 'raidReports' collection.
  */
-export const createRaidReport = onCall(async (request): Promise<{ id: string }> => {
+export const createRaidReport = onCall(async (request):
+  Promise<{ id: string }> => {
   const data = request.data as Partial<CreateRaidReportPayload>;
 
   logger.info("Received createRaidReport request", {data});
@@ -66,9 +67,9 @@ export const createRaidReport = onCall(async (request): Promise<{ id: string }> 
   }
 
   // Convert dateOfRaid to Firestore Timestamp
-  const raidTimestamp = data.dateOfRaid
-    ? admin.firestore.Timestamp.fromDate(new Date(data.dateOfRaid))
-    : null;
+  const raidTimestamp = data.dateOfRaid ?
+    admin.firestore.Timestamp.fromDate(new Date(data.dateOfRaid)) :
+    null;
 
   // Generate random pins around the given coordinate
   const randomizedCoordinates = generateRandomPins(

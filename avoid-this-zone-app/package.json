@@ -19,7 +19,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "rspack --config rspack.prod.js",
+    "build": "cross-env NODE_ENV=production rspack --config rspack.prod.js",
     "build:analyze": "npm run build -- --analyze",
     "check": "npm run typecheck && npm run lint && npm run test && npm run test:ui",
     "lint": "eslint -c eslint.config.mjs src/",
@@ -76,6 +76,7 @@
     "@typescript-eslint/parser": "^8.18.0",
     "babel-jest": "^29.7.0",
     "buffer": "^6.0.3",
+    "cross-env": "^7.0.3",
     "eslint": "^9.16.0",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-react": "^7.37.2",

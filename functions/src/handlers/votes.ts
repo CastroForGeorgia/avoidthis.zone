@@ -11,15 +11,16 @@ import {onCall, HttpsError} from "firebase-functions/v2/https";
 import {db} from "../lib/firestore";
 import * as admin from "firebase-admin";
 import * as logger from "firebase-functions/logger";
+import {withAuth} from "../middleware/auth";
 
 // Suppose the client sends { reportId: string, voteType: "up" | "down" }
 interface VoteOnReportData {
-    reportId: string;
-    voteType: "up" | "down";
+  reportId: string;
+  voteType: "up" | "down";
 }
 
-export const voteOnReport = onCall(async (request):
-    Promise<{ success: boolean }> => {
+export const voteOnReport = onCall(withAuth(async (request):
+  Promise<{ success: boolean }> => {
   const data = request.data as Partial<VoteOnReportData>;
 
   logger.info("Received voteOnReport request", {data});
@@ -59,4 +60,4 @@ export const voteOnReport = onCall(async (request):
 
   logger.info("Vote on report successful", {reportId: data.reportId});
   return {success: true};
-});
+}));
