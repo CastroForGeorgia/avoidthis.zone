@@ -7,7 +7,7 @@ if (process.env.NODE_ENV === "development") {
     console.log("Connecting to Firebase emulators...");
 
     // Connect Firestore Emulator
-    connectFirestoreEmulator(db, "127.0.0.1", 9000);
+    connectFirestoreEmulator(db, "127.0.0.1", 8080);
 }
 
 export interface RaidReportFirestoreData {

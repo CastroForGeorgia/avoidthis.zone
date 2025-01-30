@@ -8,7 +8,7 @@ export const functions: Functions = getFunctions(app);
 // Check if in development mode
 if (process.env.NODE_ENV === "development") {
     console.log("Connecting to Firebase emulators...");
-    connectFunctionsEmulator(functions, "127.0.0.1", 4001);
+    connectFunctionsEmulator(functions, "127.0.0.1", 5001);
 }
 
 /**
