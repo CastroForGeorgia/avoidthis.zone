@@ -47,7 +47,8 @@ export const ALLOWED_RAID_LOCATION_CATEGORY = [
   "OTHER",
 ] as const;
 
-export type RaidLocationCategoryType = typeof ALLOWED_RAID_LOCATION_CATEGORY[number];
+export type RaidLocationCategoryType =
+  typeof ALLOWED_RAID_LOCATION_CATEGORY[number];
 
 // --------------------------------------
 // DETAIL LOCATION
@@ -81,7 +82,8 @@ export const ALLOWED_DETAIL_LOCATION = [
   "OTHER_FACILITY",
 ] as const;
 
-export type DetailLocationType = typeof ALLOWED_DETAIL_LOCATION[number];
+export type DetailLocationType =
+  typeof ALLOWED_DETAIL_LOCATION[number];
 
 // --------------------------------------
 // WAS SUCCESSFUL
