@@ -1,15 +1,49 @@
 import React, { useEffect, useState } from "react";
-import { collection, DocumentData, onSnapshot, orderBy, query, QuerySnapshot } from "firebase/firestore";
-import { db, RaidReportFirestoreData } from "../../firebase/firestore";
-import { Card, Spin, Alert } from "antd";
+import { Table, Spin, Alert } from "antd";
+import type { ColumnsType } from "antd/es/table";
+import {
+  collection,
+  DocumentData,
+  onSnapshot,
+  query,
+  orderBy,
+  QuerySnapshot,
+} from "firebase/firestore";
+import { db, fetchEnumValues, RaidReportFirestoreData } from "../../firebase/firestore";
 import { useTranslation } from "react-i18next";
 
-const RaidReportCard: React.FC = () => {
+const RaidReportTable: React.FC = () => {
   const [reports, setReports] = useState<RaidReportFirestoreData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
+  // State for our enums
+  const [enumData, setEnumData] = useState<Record<string, string[]>>({});
+  const [isLoadingEnums, setIsLoadingEnums] = useState<boolean>(false);
+  const [enumError, setEnumError] = useState<string | null>(null);
+
   const { t } = useTranslation();
 
+  // 1) Load the enums (once)
+  useEffect(() => {
+    const loadEnums = async () => {
+      setIsLoadingEnums(true);
+      setEnumError(null);
+      try {
+        const data = await fetchEnumValues();
+        setEnumData(data as Record<string, string[]>);
+      } catch (error) {
+        console.error("Error fetching enums:", error);
+        setEnumError(t("SideDrawer.errorMessages.genericError"));
+      } finally {
+        setIsLoadingEnums(false);
+      }
+    };
+
+    loadEnums();
+  }, [t]);
+
+  // 2) Load the raid reports from Firestore
   useEffect(() => {
     const raidReportsCollection = collection(db, "raidReports");
     const reportsQuery = query(raidReportsCollection, orderBy("createdAt", "desc"));
@@ -35,14 +69,87 @@ const RaidReportCard: React.FC = () => {
     return () => unsubscribe();
   }, [t]);
 
-  const handleVote = (id: string, type: "upvote" | "downvote") => {
-    console.log(`${t("ReportModal.labels.tactics")} ${type} on report with ID: ${id}`);
-  };
-
+  // Helper for reading out localized or unknown
   const getDisplayValue = (value: any, enumKey: string) =>
     value ? t(`${enumKey}.${value}`) : t("Common.unknown");
 
-  if (loading) {
+  const dataSource = reports.map((report) => ({
+    key: report.id,
+    ...report,
+  }));
+
+  // Helper to convert enum values into Table filters
+  const createFilters = (enumKey: string) => {
+    const values = enumData[enumKey] || [];
+    return values.map((val) => ({
+      text: t(`Enums.${enumKey}.${val}`),
+      value: val,
+    }));
+  };
+
+  // 3) Define columns with filters from your enumData
+  const columns: ColumnsType<RaidReportFirestoreData> = [
+    {
+      title: t("ReportModal.labels.sourceOfInfo"),
+      dataIndex: "sourceOfInfo",
+      key: "sourceOfInfo",
+      filters: createFilters("ALLOWED_SOURCE_OF_INFO"),
+      onFilter: (value, record) => record.sourceOfInfo === (value as string),
+      render: (value: string) => getDisplayValue(value, "Enums.ALLOWED_SOURCE_OF_INFO"),
+    },
+    {
+      title: t("ReportModal.labels.tactics"),
+      dataIndex: "tacticsUsed",
+      key: "tacticsUsed",
+      filters: createFilters("ALLOWED_TACTICS"),
+      onFilter: (value, record) => record.tacticsUsed.includes(value as string),
+      render: (values: string[]) =>
+        values && values.length
+          ? values.map((val) => t(`Enums.ALLOWED_TACTICS.${val}`)).join(", ")
+          : t("Common.unknown"),
+    },
+    {
+      title: t("ReportModal.labels.locationReference"),
+      dataIndex: "locationReference",
+      key: "locationReference",
+      filters: createFilters("ALLOWED_LOCATION_REFERENCE"),
+      onFilter: (value, record) => record.locationReference === (value as string),
+      render: (value: string) => getDisplayValue(value, "Enums.ALLOWED_LOCATION_REFERENCE"),
+    },
+    {
+      title: t("ReportModal.labels.raidLocationCategory"),
+      dataIndex: "raidLocationCategory",
+      key: "raidLocationCategory",
+      filters: createFilters("ALLOWED_RAID_LOCATION_CATEGORY"),
+      onFilter: (value, record) => record.raidLocationCategory === (value as string),
+      render: (value: string) => getDisplayValue(value, "Enums.ALLOWED_RAID_LOCATION_CATEGORY"),
+    },
+    {
+      title: t("ReportModal.labels.detailLocation"),
+      dataIndex: "detailLocation",
+      key: "detailLocation",
+      filters: createFilters("ALLOWED_DETAIL_LOCATION"),
+      onFilter: (value, record) => record.detailLocation === (value as string),
+      render: (value: string) => getDisplayValue(value, "Enums.ALLOWED_DETAIL_LOCATION"),
+    },
+    {
+      title: t("ReportModal.labels.wasSuccessful"),
+      dataIndex: "wasSuccessful",
+      key: "wasSuccessful",
+      filters: createFilters("ALLOWED_WAS_SUCCESSFUL"),
+      onFilter: (value, record) => record.wasSuccessful === (value as string),
+      render: (value: string) => getDisplayValue(value, "Enums.ALLOWED_WAS_SUCCESSFUL"),
+    },
+    {
+      title: t("Common.createdAt"),
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (value: any) => (value ? value.toDate().toLocaleString() : t("Common.unknown")),
+    },
+  ];
+
+  // 4) Handle loading + error states
+  if (isLoadingEnums || loading) {
     return (
       <div className="results-content">
         <Spin tip={t("Common.loadingMessage")} />
@@ -50,65 +157,32 @@ const RaidReportCard: React.FC = () => {
     );
   }
 
-  if (error) {
+  if (enumError || error) {
     return (
       <div className="results-content">
-        <Alert message={t("Common.errorOccurred")} description={error} type="error" showIcon closable />
+        <Alert
+          message={t("Common.errorOccurred")}
+          description={enumError || error}
+          type="error"
+          showIcon
+          closable
+        />
       </div>
     );
   }
 
+  // 5) Render the table with all filters from your enum data
   return (
-    <div className="raid-report-list">
-      {reports.map((report) => (
-        <Card
-          key={report.id}
-          title={`${getDisplayValue(report.sourceOfInfo, "Enums.ALLOWED_SOURCE_OF_INFO")}`} // Source of Info as title
-          extra={<span>{report.createdAt.toDate().toLocaleDateString()}</span>}
-          style={{ marginBottom: "16px" }}
-          bordered
-        >
-          <p>
-            <strong>{t("ReportModal.labels.tactics")}:</strong>{" "}
-            {report.tacticsUsed.length > 0
-              ? report.tacticsUsed.map((tactic) => t(`Enums.ALLOWED_TACTICS.${tactic}`)).join(", ")
-              : t("Common.unknown")}
-          </p>
-          <p>
-            <strong>{t("ReportModal.labels.locationReference")}:</strong>{" "}
-            {getDisplayValue(report.locationReference, "Enums.ALLOWED_LOCATION_REFERENCE")}
-          </p>
-          <p>
-            <strong>{t("ReportModal.labels.raidLocationCategory")}:</strong>{" "}
-            {getDisplayValue(report.raidLocationCategory, "Enums.ALLOWED_RAID_LOCATION_CATEGORY")}
-          </p>
-          <p>
-            <strong>{t("ReportModal.labels.detailLocation")}:</strong>{" "}
-            {getDisplayValue(report.detailLocation, "Enums.ALLOWED_DETAIL_LOCATION")}
-          </p>
-          <p>
-            <strong>{t("ReportModal.labels.wasSuccessful")}:</strong>{" "}
-            {getDisplayValue(report.wasSuccessful, "Enums.ALLOWED_WAS_SUCCESSFUL")}
-          </p>
-
-          {/* If sourceOfInfoUrl exists, show it as a clickable link */}
-          {/* {report.sourceOfInfoUrl && (
-            <p>
-              <strong>{t("Common.viewDetails")}:</strong>{" "}
-              <a
-                href={report.sourceOfInfoUrl.startsWith("http") ? report.sourceOfInfoUrl : `https://${report.sourceOfInfoUrl}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ marginLeft: "8px" }}
-              >
-                {t("Common.viewDetails")}
-              </a>
-            </p>
-          )} */}
-        </Card>
-      ))}
+    <div className="raid-report-table">
+      <Table<RaidReportFirestoreData>
+        columns={columns}
+        dataSource={dataSource}
+        onChange={(pagination, filters, sorter) => {
+          console.log("Table changed:", { pagination, filters, sorter });
+        }}
+      />
     </div>
   );
 };
 
-export default RaidReportCard;
+export default RaidReportTable;

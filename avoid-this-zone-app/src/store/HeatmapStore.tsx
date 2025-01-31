@@ -8,7 +8,6 @@ import VectorSource from 'ol/source/Vector';
 import { db, RaidReportFirestoreData } from '../firebase/firestore';
 import { Map as OlMap } from 'ol';
 import { collection, onSnapshot, QuerySnapshot, DocumentData } from 'firebase/firestore';
-import { getFirestore } from 'firebase/firestore'; // Ensure Firebase is initialized
 import { fromLonLat } from 'ol/proj';
 
 interface HeatmapStoreType {

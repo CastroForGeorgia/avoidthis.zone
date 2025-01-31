@@ -105,6 +105,7 @@ export default {
                 PERSONAL_OBSERVATION: 'Personal Observation',
                 COMMUNITY_REPORT: 'Community Report',
                 PUBLIC_RECORD: 'Public Record',
+                LEGAL_AID_ORG: "Organization"
             },
         },
         Common: {
