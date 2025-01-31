@@ -25,7 +25,8 @@ interface AppDataContextProps {
   enumData: Record<string, string[]>;
   loadingEnums: boolean;
   enumError: string | null;
-  // Expose the setter so children can update the filters.
+  // Now include the filters in the context so all components can access them.
+  reportQueryFilters: ReportQueryFilter[];
   setReportQueryFilters: React.Dispatch<React.SetStateAction<ReportQueryFilter[]>>;
 }
 
@@ -36,18 +37,16 @@ export const AppDataContext = createContext<AppDataContextProps>({
   enumData: {},
   loadingEnums: true,
   enumError: null,
+  reportQueryFilters: [],
   setReportQueryFilters: () => {},
 });
 
 interface AppDataProviderProps {
   children: ReactNode;
-  // Optionally, you can provide initial filters.
-  initialReportQueryFilters?: ReportQueryFilter[];
 }
 
 export const AppDataProvider: React.FC<AppDataProviderProps> = ({
   children,
-  initialReportQueryFilters = [],
 }) => {
   const [reports, setReports] = useState<RaidReportFirestoreData[]>([]);
   const [loadingReports, setLoadingReports] = useState(true);
@@ -59,7 +58,7 @@ export const AppDataProvider: React.FC<AppDataProviderProps> = ({
 
   // Manage the query filters in state.
   const [reportQueryFilters, setReportQueryFilters] = useState<ReportQueryFilter[]>(
-    initialReportQueryFilters
+    []
   );
 
   const { t } = useTranslation();
@@ -121,7 +120,7 @@ export const AppDataProvider: React.FC<AppDataProviderProps> = ({
     loadEnums();
   }, [t]);
 
-  // C) Provide everything through context
+  // C) Provide everything through context—including our filter state—to ensure a unified, transparent system.
   const value: AppDataContextProps = {
     reports,
     loadingReports,
@@ -129,6 +128,7 @@ export const AppDataProvider: React.FC<AppDataProviderProps> = ({
     enumData,
     loadingEnums,
     enumError,
+    reportQueryFilters,
     setReportQueryFilters,
   };
 

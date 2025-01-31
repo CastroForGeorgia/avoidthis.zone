@@ -86,6 +86,7 @@ export default {
                 TRAIN_STATION: 'Train Station',
                 AIRPORT: 'Airport',
                 OTHER_FACILITY: 'Other Facility',
+                SCHOOL: "School"
             },
             ALLOWED_WAS_SUCCESSFUL: {
                 YES: 'Yes',

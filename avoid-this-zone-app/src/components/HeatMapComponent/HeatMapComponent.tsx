@@ -15,7 +15,7 @@ import React, {
   import { RaidReportFirestoreData } from '../../firebase/firestore';
   
   import { MapComponentProps } from '@terrestris/react-geo/dist/Map/MapComponent/MapComponent';
-import { AppDataContext } from '../../providers/AppDataContextProvider';
+import { AppDataContext, ReportQueryFilter } from '../../providers/AppDataContextProvider';
   // ^ Adjust path if you keep a separate data provider
   
   // Example: HeatMapComponent that consumes Firestore data and an OL map
@@ -27,6 +27,7 @@ import { AppDataContext } from '../../providers/AppDataContextProvider';
       reports,
       loadingReports,
       reportsError,
+      setReportQueryFilters
     } = useContext(AppDataContext);
   
     // Store references to the heatmap layer and any features we add
