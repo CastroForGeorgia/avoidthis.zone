@@ -35,16 +35,22 @@ export default {
             resetButton: 'Reset',
             formErrors: {
                 requiredField: 'This field is required.',
-                invalidDate: "This date is invalid."
+                invalidDate: "This date is invalid.",
+                invalidUrl: "Please enter a valid URL."
+
             },
             labels: {
                 tactics: 'Tactics',
+                filters: "Details",
                 raidLocationCategory: 'Raid Location Category',
                 detailLocation: 'Detail Location',
                 wasSuccessful: 'Was anyone detained?',
                 locationReference: 'Location Reference',
                 sourceOfInfo: 'Source of Information',
-                dateOfRaid: '(Optional) Date'
+                dateOfRaid: '(Optional) Date',
+                sourceOfInfoUrl: "Source URL",
+                sourceOfInfoUrlPlaceholder: "Enter the URL of the source (if applicable)"
+
             },
         },
         Enums: {
@@ -111,6 +117,7 @@ export default {
             searchPlaceholder: 'Search...',
             confirmButton: 'Confirm',
             cancelButton: 'Cancel',
+            unknown: "Unknown"
         },
     },
 };

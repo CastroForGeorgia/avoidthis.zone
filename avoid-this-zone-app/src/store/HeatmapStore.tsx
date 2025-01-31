@@ -5,7 +5,7 @@ import { Feature } from 'ol';
 import { Point } from 'ol/geom';
 import HeatmapLayer from 'ol/layer/Heatmap';
 import VectorSource from 'ol/source/Vector';
-import { RaidReportFirestoreData } from '../firebase/firestore';
+import { db, RaidReportFirestoreData } from '../firebase/firestore';
 import { Map as OlMap } from 'ol';
 import { collection, onSnapshot, QuerySnapshot, DocumentData } from 'firebase/firestore';
 import { getFirestore } from 'firebase/firestore'; // Ensure Firebase is initialized
@@ -86,7 +86,6 @@ export const HeatmapStoreProvider: React.FC<HeatmapStoreProviderProps> = ({ chil
    * Sets up a real-time listener to Firestore's 'heatmap' collection.
    */
   useEffect(() => {
-    const db = getFirestore();
     const heatmapCollection = collection(db, 'raidReports');
 
     const unsubscribe = onSnapshot(heatmapCollection, (snapshot: QuerySnapshot<DocumentData>) => {

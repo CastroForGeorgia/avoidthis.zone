@@ -11,6 +11,7 @@ if (process.env.NODE_ENV === "development") {
 }
 
 export interface RaidReportFirestoreData {
+    id: string
     coordinates: Array<{
       geopoint: {
         latitude: number;
@@ -23,9 +24,9 @@ export interface RaidReportFirestoreData {
     raidLocationCategory: string;
     detailLocation: string;
     wasSuccessful: string;
-    numberOfPeopleDetained: number;
     locationReference: string;
     sourceOfInfo: string;
+    sourceOfInfoUrl: string;
     upvoteCount: number;
     downvoteCount: number;
     flagCount: number;

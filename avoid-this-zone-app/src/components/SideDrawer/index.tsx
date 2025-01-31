@@ -88,11 +88,6 @@ const SideDrawer: React.FC<Partial<DrawerProps>> = (props): JSX.Element => {
             error={enumError}
             onReset={toggleDrawer}
           />
-
-          {/* Additional Content (Lazy Loaded Component) */}
-          <Suspense fallback={<Spin tip={t("SideDrawer.loadingLayers")} />}>
-            <BasicLayerTree />
-          </Suspense>
         </>
       ) : (
         <Alert

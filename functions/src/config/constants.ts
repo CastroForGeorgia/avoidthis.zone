@@ -1,11 +1,3 @@
-/**
- * config/constants.ts
- *
- * This file stores all enumerations, union types,
- * and shared TypeScript interfaces.
- * It ensures there's no freeform text by explicitly listing allowable values.
- */
-
 // --------------------------------------
 // TACTICS
 // --------------------------------------
@@ -55,8 +47,7 @@ export const ALLOWED_RAID_LOCATION_CATEGORY = [
   "OTHER",
 ] as const;
 
-export type RaidLocationCategoryType =
-  typeof ALLOWED_RAID_LOCATION_CATEGORY[number];
+export type RaidLocationCategoryType = typeof ALLOWED_RAID_LOCATION_CATEGORY[number];
 
 // --------------------------------------
 // DETAIL LOCATION
@@ -75,6 +66,7 @@ export type RaidLocationCategoryType =
 // - AIRPORT: Airport premises
 // - OTHER_FACILITY: Catch-all for other building/facility types
 export const ALLOWED_DETAIL_LOCATION = [
+  "SCHOOL",
   "STREET",
   "CAR_STOP",
   "SHELTER",
@@ -91,11 +83,12 @@ export const ALLOWED_DETAIL_LOCATION = [
 
 export type DetailLocationType = typeof ALLOWED_DETAIL_LOCATION[number];
 
-// Was ICE Successful
+// --------------------------------------
+// WAS SUCCESSFUL
+// --------------------------------------
 export const ALLOWED_WAS_SUCCESSFUL = [
   "YES",
   "NO",
-  "UNKNOWN",
 ] as const;
 
 export type WasSuccessfulType = typeof ALLOWED_WAS_SUCCESSFUL[number];
@@ -117,7 +110,6 @@ export const ALLOWED_LOCATION_REFERENCE = [
   "TRAIN_STATION",
   "ZIP_CODE",
   "LANDMARK",
-  "NONE",
 ] as const;
 
 export type LocationReferenceType = typeof ALLOWED_LOCATION_REFERENCE[number];
@@ -136,45 +128,53 @@ export const ALLOWED_SOURCE_OF_INFO = [
   "NEWS_ARTICLE",
   "PERSONAL_OBSERVATION",
   "COMMUNITY_REPORT",
+  "LEGAL_AID_ORG",
   "PUBLIC_RECORD",
 ] as const;
 
 export type SourceOfInfoType = typeof ALLOWED_SOURCE_OF_INFO[number];
 
+// --------------------------------------
+// CreateRaidReportPayload Interface
+// --------------------------------------
 /**
-   * CreateRaidReportPayload: interface describing the inbound data
-   * for our createRaidReport Cloud Function. No freeform text allowed.
-   */
+ * CreateRaidReportPayload: interface describing the inbound data
+ * for our createRaidReport Cloud Function.
+ * No freeform text allowed. Optional fields marked accordingly.
+ */
 export interface CreateRaidReportPayload {
   coordinates: {
     lat: number;
     lng: number;
   };
-  dateOfRaid: string; // e.g. "2025-01-16T10:00:00.000Z"
   tacticsUsed: TacticsType[];
-  raidLocationCategory: RaidLocationCategoryType;
-  detailLocation: DetailLocationType;
-  wasSuccessful: WasSuccessfulType;
-  locationReference: LocationReferenceType;
-  sourceOfInfo: SourceOfInfoType;
+  raidLocationCategory?: RaidLocationCategoryType | null; // Optional
+  detailLocation?: DetailLocationType | null; // Optional
+  wasSuccessful?: WasSuccessfulType | null; // Optional
+  locationReference?: LocationReferenceType | null; // Optional
+  sourceOfInfo?: SourceOfInfoType | null; // Optional
+  sourceOfInfoUrl?: string | null; // Optional
 }
 
+// --------------------------------------
+// RaidReportFirestoreData Interface
+// --------------------------------------
 /**
-   * Data shape for documents inside the 'raidReports' collection in Firestore.
-   * No freeform text. All enumerations come from the above constants.
-   */
+ * RaidReportFirestoreData: Interface describing the Firestore document shape.
+ * No freeform text allowed. Optional fields marked accordingly.
+ */
 export interface RaidReportFirestoreData {
   coordinates: Array<{
     geopoint: FirebaseFirestore.GeoPoint;
     geohash: string;
   }>;
-  dateOfRaid: FirebaseFirestore.Timestamp | null;
   tacticsUsed: TacticsType[];
-  raidLocationCategory: RaidLocationCategoryType;
-  detailLocation: DetailLocationType;
-  wasSuccessful: WasSuccessfulType;
-  locationReference: LocationReferenceType;
-  sourceOfInfo: SourceOfInfoType;
+  raidLocationCategory?: RaidLocationCategoryType | null; // Optional
+  detailLocation?: DetailLocationType | null; // Optional
+  wasSuccessful?: WasSuccessfulType | null; // Optional
+  locationReference?: LocationReferenceType | null; // Optional
+  sourceOfInfo?: SourceOfInfoType | null; // Optional
+  sourceOfInfoUrl?: string | null; // Optional
   upvoteCount: number;
   downvoteCount: number;
   flagCount: number;
