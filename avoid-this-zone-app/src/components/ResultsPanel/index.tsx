@@ -1,75 +1,23 @@
-import React, { Key, useEffect, useState } from "react";
+import React, { Key, useContext, useEffect, useState } from "react";
 import { Table, Spin, Alert, Button, Space } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import {
-  collection,
-  DocumentData,
-  onSnapshot,
-  query,
-  orderBy,
-  QuerySnapshot,
-} from "firebase/firestore";
-import { db, fetchEnumValues, RaidReportFirestoreData } from "../../firebase/firestore";
 import { useTranslation } from "react-i18next";
 import { DatePicker } from "antd/lib";
+import { AppDataContext } from "../../providers/AppDataContextProvider";
+import { RaidReportFirestoreData } from "../../firebase/firestore";
 const { RangePicker } = DatePicker;
 
 const RaidReportTable: React.FC = () => {
-  const [reports, setReports] = useState<RaidReportFirestoreData[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-
-  // State for our enums
-  const [enumData, setEnumData] = useState<Record<string, string[]>>({});
-  const [isLoadingEnums, setIsLoadingEnums] = useState<boolean>(false);
-  const [enumError, setEnumError] = useState<string | null>(null);
+  const {
+    reports,
+    loadingReports,
+    reportsError,
+    enumData,
+    loadingEnums,
+    enumError,
+  } = useContext(AppDataContext);
 
   const { t } = useTranslation();
-
-  // 1) Load the enums (once)
-  useEffect(() => {
-    const loadEnums = async () => {
-      setIsLoadingEnums(true);
-      setEnumError(null);
-      try {
-        const data = await fetchEnumValues();
-        setEnumData(data as Record<string, string[]>);
-      } catch (error) {
-        console.error("Error fetching enums:", error);
-        setEnumError(t("SideDrawer.errorMessages.genericError"));
-      } finally {
-        setIsLoadingEnums(false);
-      }
-    };
-
-    loadEnums();
-  }, [t]);
-
-  // 2) Load the raid reports from Firestore
-  useEffect(() => {
-    const raidReportsCollection = collection(db, "raidReports");
-    const reportsQuery = query(raidReportsCollection, orderBy("createdAt", "desc"));
-
-    const unsubscribe = onSnapshot(
-      reportsQuery,
-      (snapshot: QuerySnapshot<DocumentData>) => {
-        const fetchedReports: RaidReportFirestoreData[] = [];
-        snapshot.forEach((doc) => {
-          const data = doc.data() as RaidReportFirestoreData;
-          fetchedReports.push({ ...data, id: doc.id });
-        });
-        setReports(fetchedReports);
-        setLoading(false);
-      },
-      (err) => {
-        console.error("Error fetching raid reports:", err);
-        setError(t("Common.errorOccurred"));
-        setLoading(false);
-      }
-    );
-
-    return () => unsubscribe();
-  }, [t]);
 
   // Helper for reading out localized or unknown
   const getDisplayValue = (value: any, enumKey: string) =>
@@ -218,7 +166,7 @@ const RaidReportTable: React.FC = () => {
   ];
 
   // 4) Handle loading + error states
-  if (isLoadingEnums || loading) {
+  if (loadingEnums || loadingReports) {
     return (
       <div className="results-content">
         <Spin tip={t("Common.loadingMessage")} />
@@ -226,12 +174,12 @@ const RaidReportTable: React.FC = () => {
     );
   }
 
-  if (enumError || error) {
+  if (enumError || reportsError) {
     return (
       <div className="results-content">
         <Alert
           message={t("Common.errorOccurred")}
-          description={enumError || error}
+          description={enumError || reportsError}
           type="error"
           showIcon
           closable

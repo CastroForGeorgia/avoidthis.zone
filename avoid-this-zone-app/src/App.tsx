@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { Layout, Drawer, Button } from 'antd';
+import { Layout, Drawer } from 'antd';
 import BasicMapComponent from './components/BasicMapComponent';
 import FiltersDrawer from './components/FiltersDrawer';
 import ResultsPanel from './components/ResultsPanel';
-import { SettingOutlined } from '@ant-design/icons';
 import './App.less';
 
 const { Content } = Layout;
@@ -20,7 +19,7 @@ export const App: React.FC = (): JSX.Element => {
 
       {/* Bottom 1/3: Results Panel */}
       <div className="results-panel">
-        <ResultsPanel />
+          <ResultsPanel />
       </div>
 
       {/* Floating Button to Open Filters Drawer */}

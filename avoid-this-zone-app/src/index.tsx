@@ -28,6 +28,7 @@ import { bbox } from 'ol/loadingstrategy';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { HeatmapStoreProvider } from './store/HeatmapStore';
 import { signInAnonymouslyIfNeeded } from './firebase';
+import { AppDataProvider } from './providers/AppDataContextProvider';
 
 // ----------------------------------
 // 1) The function that creates and configures our default map with dynamic loading
@@ -201,7 +202,9 @@ const AppLoader = () => {
                   <meta property="og:url" content="https://avoidthis.zone" />
                   <link rel="canonical" href="https://avoidthis.zone" />
                 </Helmet>
-                <App />
+                <AppDataProvider>
+                  <App />
+                </AppDataProvider>
               </HeatmapStoreProvider>
             </MapContext.Provider>
           </ReduxProvider>
