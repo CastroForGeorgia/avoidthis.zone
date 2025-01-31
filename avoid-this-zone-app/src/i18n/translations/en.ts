@@ -118,7 +118,10 @@ export default {
             searchPlaceholder: 'Search...',
             confirmButton: 'Confirm',
             cancelButton: 'Cancel',
-            unknown: "Unknown"
+            unknown: "Unknown",
+            createdAt: "CreatedAt",
+            viewOnMap: "View On Map",
+            navigate: "View On Map"
         },
     },
 };

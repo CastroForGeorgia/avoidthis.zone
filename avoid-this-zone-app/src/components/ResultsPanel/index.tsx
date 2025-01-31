@@ -1,10 +1,13 @@
-import React, { Key, useContext, useEffect, useState } from "react";
+import React, { Key, useContext } from "react";
 import { Table, Spin, Alert, Button, Space } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useTranslation } from "react-i18next";
 import { DatePicker } from "antd/lib";
 import { AppDataContext } from "../../providers/AppDataContextProvider";
 import { RaidReportFirestoreData } from "../../firebase/firestore";
+import { useMap } from '@terrestris/react-util';
+import { fromLonLat } from "ol/proj";
+
 const { RangePicker } = DatePicker;
 
 const RaidReportTable: React.FC = () => {
@@ -18,6 +21,7 @@ const RaidReportTable: React.FC = () => {
   } = useContext(AppDataContext);
 
   const { t } = useTranslation();
+  const map = useMap();
 
   // Helper for reading out localized or unknown
   const getDisplayValue = (value: any, enumKey: string) =>
@@ -42,8 +46,41 @@ const RaidReportTable: React.FC = () => {
   const formatDateTime = (timestamp?: any) =>
     timestamp ? timestamp.toDate().toLocaleString() : t("Common.unknown");
 
+  /**
+   * handleNavigation
+   *
+   * This function navigates the map to the report's coordinates.
+   * It’s another way we empower the working class—by making sure
+   * that every report is not just a statistic but a pinpointed location
+   * of where the system is failing everyday people.
+   *
+   * @param report - The report object containing the coordinates.
+   */
+  const handleNavigation = (report: RaidReportFirestoreData) => {
+    if (report.coordinates && map) {
+      // Assuming coordinates are stored as [longitude, latitude]
+      const { geopoint } = report.coordinates[0];
+      map.getView().animate({
+        center: fromLonLat([geopoint.latitude, geopoint.longitude]),
+        zoom: 14, // Adjust zoom level as needed
+        duration: 1000,
+      });
+    } else {
+      console.warn("Coordinates not available for this report.");
+    }
+  };
+
   // 3) Define columns with filters from your enumData
   const columns: ColumnsType<RaidReportFirestoreData> = [
+    {
+      title: t("Common.navigate"),
+      key: "navigate",
+      render: (_, record) => (
+        <Button type="link" onClick={() => handleNavigation(record)}>
+          {t("Common.viewOnMap")}
+        </Button>
+      ),
+    },
     {
       title: t("ReportModal.labels.sourceOfInfo"),
       dataIndex: "sourceOfInfo",

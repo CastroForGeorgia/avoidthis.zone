@@ -6,9 +6,17 @@ import {
   orderBy,
   query,
   QuerySnapshot,
+  where,
 } from "firebase/firestore";
 import { db, fetchEnumValues, RaidReportFirestoreData } from "../firebase/firestore";
 import { useTranslation } from "react-i18next";
+
+// Define a filter type for report queries
+export interface ReportQueryFilter {
+  field: string;
+  operator: "==" | "<" | ">" | "<=" | ">=" | "array-contains";
+  value: any;
+}
 
 interface AppDataContextProps {
   reports: RaidReportFirestoreData[];
@@ -17,6 +25,8 @@ interface AppDataContextProps {
   enumData: Record<string, string[]>;
   loadingEnums: boolean;
   enumError: string | null;
+  // Expose the setter so children can update the filters.
+  setReportQueryFilters: React.Dispatch<React.SetStateAction<ReportQueryFilter[]>>;
 }
 
 export const AppDataContext = createContext<AppDataContextProps>({
@@ -26,13 +36,19 @@ export const AppDataContext = createContext<AppDataContextProps>({
   enumData: {},
   loadingEnums: true,
   enumError: null,
+  setReportQueryFilters: () => {},
 });
 
 interface AppDataProviderProps {
   children: ReactNode;
+  // Optionally, you can provide initial filters.
+  initialReportQueryFilters?: ReportQueryFilter[];
 }
 
-export const AppDataProvider: React.FC<AppDataProviderProps> = ({ children }) => {
+export const AppDataProvider: React.FC<AppDataProviderProps> = ({
+  children,
+  initialReportQueryFilters = [],
+}) => {
   const [reports, setReports] = useState<RaidReportFirestoreData[]>([]);
   const [loadingReports, setLoadingReports] = useState(true);
   const [reportsError, setReportsError] = useState<string | null>(null);
@@ -41,12 +57,26 @@ export const AppDataProvider: React.FC<AppDataProviderProps> = ({ children }) =>
   const [loadingEnums, setLoadingEnums] = useState(true);
   const [enumError, setEnumError] = useState<string | null>(null);
 
+  // Manage the query filters in state.
+  const [reportQueryFilters, setReportQueryFilters] = useState<ReportQueryFilter[]>(
+    initialReportQueryFilters
+  );
+
   const { t } = useTranslation();
 
-  // A) Load Reports
+  // A) Load Reports with dynamic filters
   useEffect(() => {
     const raidReportsCollection = collection(db, "raidReports");
-    const reportsQuery = query(raidReportsCollection, orderBy("createdAt", "desc"));
+
+    // Build query constraints: order by createdAt and apply dynamic filters.
+    const queryConstraints = [
+      orderBy("createdAt", "desc"),
+      ...reportQueryFilters.map((filter) =>
+        where(filter.field, filter.operator, filter.value)
+      ),
+    ];
+
+    const reportsQuery = query(raidReportsCollection, ...queryConstraints);
 
     const unsubscribe = onSnapshot(
       reportsQuery,
@@ -66,8 +96,9 @@ export const AppDataProvider: React.FC<AppDataProviderProps> = ({ children }) =>
       }
     );
 
+    // Use JSON.stringify to ensure the effect only runs when the actual filter values change.
     return () => unsubscribe();
-  }, [t]);
+  }, [t, JSON.stringify(reportQueryFilters)]);
 
   // B) Load Enums
   useEffect(() => {
@@ -90,7 +121,7 @@ export const AppDataProvider: React.FC<AppDataProviderProps> = ({ children }) =>
     loadEnums();
   }, [t]);
 
-  // C) Provide everything
+  // C) Provide everything through context
   const value: AppDataContextProps = {
     reports,
     loadingReports,
@@ -98,6 +129,7 @@ export const AppDataProvider: React.FC<AppDataProviderProps> = ({ children }) =>
     enumData,
     loadingEnums,
     enumError,
+    setReportQueryFilters,
   };
 
   return (
