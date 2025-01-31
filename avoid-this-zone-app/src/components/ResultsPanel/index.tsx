@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Table, Spin, Alert } from "antd";
+import React, { Key, useEffect, useState } from "react";
+import { Table, Spin, Alert, Button, Space } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import {
   collection,
@@ -11,6 +11,8 @@ import {
 } from "firebase/firestore";
 import { db, fetchEnumValues, RaidReportFirestoreData } from "../../firebase/firestore";
 import { useTranslation } from "react-i18next";
+import { DatePicker } from "antd/lib";
+const { RangePicker } = DatePicker;
 
 const RaidReportTable: React.FC = () => {
   const [reports, setReports] = useState<RaidReportFirestoreData[]>([]);
@@ -87,6 +89,11 @@ const RaidReportTable: React.FC = () => {
     }));
   };
 
+
+  // Helper function to display date/time
+  const formatDateTime = (timestamp?: any) =>
+    timestamp ? timestamp.toDate().toLocaleString() : t("Common.unknown");
+
   // 3) Define columns with filters from your enumData
   const columns: ColumnsType<RaidReportFirestoreData> = [
     {
@@ -144,7 +151,69 @@ const RaidReportTable: React.FC = () => {
       title: t("Common.createdAt"),
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (value: any) => (value ? value.toDate().toLocaleString() : t("Common.unknown")),
+      render: (value: any) => formatDateTime(value),
+
+      // A) Custom filter dropdown for date range
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
+        // selectedKeys[0] will store our [startMoment, endMoment]
+        const currentRange = (selectedKeys[0] as any) || [];
+        return (
+          <div style={{ padding: 8 }}>
+            <RangePicker
+              // Set the current selection
+              value={currentRange}
+              onChange={(dates) => {
+                // If user clears the range, set an empty array
+                setSelectedKeys(dates ? ([dates] as unknown as Key[]) : []);
+              }}
+              style={{ marginBottom: 8, display: "block" }}
+            />
+            <Space>
+              <Button
+                type="primary"
+                onClick={() => confirm()}
+                size="small"
+                style={{ width: 90 }}
+              >
+                {t("Common.filter")}
+              </Button>
+              <Button
+                onClick={() => {
+                  clearFilters && clearFilters();
+                }}
+                size="small"
+                style={{ width: 90 }}
+              >
+                {t("Common.reset")}
+              </Button>
+            </Space>
+          </div>
+        );
+      },
+
+      // B) Force the filter dropdown to stay open or close
+      filterIcon: (filtered) => (
+        <span style={{ color: filtered ? "#1890ff" : undefined }}>
+          &#128197;{/*Calendar icon placeholder*/}
+        </span>
+      ),
+      onFilterDropdownVisibleChange: (visible) => {
+        // If you need to focus something when dropdown is opened, do it here
+      },
+
+      // C) The filtering logic
+      onFilter: (value, record) => {
+        // "value" here will be our selectedKeys[0]: [startMoment, endMoment]
+        const [start, end] = (value as any) || [];
+        if (!start || !end) {
+          // If no range is selected, show all
+          return true;
+        }
+        const recordDate = record.createdAt?.toDate();
+        if (!recordDate) return false;
+        // Compare recordDate with the chosen [start, end]
+        return recordDate >= start.toDate() && recordDate <= end.toDate();
+      },
     },
   ];
 
