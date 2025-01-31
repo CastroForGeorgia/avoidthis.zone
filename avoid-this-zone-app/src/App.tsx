@@ -24,13 +24,13 @@ export const App: React.FC = (): JSX.Element => {
       </div>
 
       {/* Floating Button to Open Filters Drawer */}
-      <Button
+      {/* <Button
         className="filters-button"
         type="primary"
         shape="circle"
         icon={<SettingOutlined />}
         onClick={() => setDrawerVisible(true)}
-      />
+      /> */}
 
       {/* Slide-up Drawer for Filters/Settings */}
       <Drawer
