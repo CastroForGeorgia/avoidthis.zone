@@ -7,6 +7,8 @@ import { AppDataContext, ReportQueryFilter } from "../../providers/AppDataContex
 import { RaidReportFirestoreData } from "../../firebase/firestore";
 import { useMap } from "@terrestris/react-util";
 import { fromLonLat } from "ol/proj";
+import { Timestamp } from "firebase/firestore";
+import moment from "moment";
 
 const { RangePicker } = DatePicker;
 
@@ -124,28 +126,29 @@ const RaidReportTable: React.FC = () => {
       });
     }
     if (filters.wasSuccessful && filters.wasSuccessful.length > 0) {
-      // Convert the filter to a boolean if necessary.
-      const boolValue =
-        filters.wasSuccessful[0] === "true" || filters.wasSuccessful[0] === true;
       newQueryFilters.push({
         field: "wasSuccessful",
         operator: "==",
-        value: boolValue,
+        value: filters.wasSuccessful[0],
       });
     }
     if (filters.createdAt && filters.createdAt.length > 0) {
       // The createdAt filter returns an array containing the selected date range.
       const range = filters.createdAt[0];
       if (range && Array.isArray(range) && range.length === 2) {
+        // Convert the dates to UTC before setting the boundaries.
+        const startOfDayUTC = range[0].startOf("day").toDate();
+        const endOfDayUTC = range[1].endOf("day").toDate();
+
         newQueryFilters.push({
           field: "createdAt",
           operator: ">=",
-          value: range[0].toDate(),
+          value: Timestamp.fromDate(startOfDayUTC),
         });
         newQueryFilters.push({
           field: "createdAt",
           operator: "<=",
-          value: range[1].toDate(),
+          value: Timestamp.fromDate(endOfDayUTC),
         });
       }
     }
@@ -237,6 +240,7 @@ const RaidReportTable: React.FC = () => {
           <div style={{ padding: 8 }}>
             <RangePicker
               value={currentRange}
+              disabledDate={(current) => current && current > moment().endOf("day")}
               onChange={(dates) => {
                 // If dates are cleared, set an empty array.
                 setSelectedKeys(dates ? ([dates] as unknown as Key[]) : []);
@@ -259,7 +263,7 @@ const RaidReportTable: React.FC = () => {
                 size="small"
                 style={{ width: 90 }}
               >
-                {t("Common.reset")}
+                {t("Common.resetButton")}
               </Button>
             </Space>
           </div>
@@ -270,19 +274,6 @@ const RaidReportTable: React.FC = () => {
           &#128197;
         </span>
       ),
-      onFilterDropdownVisibleChange: (visible) => {
-        // Optional: focus handling when dropdown opens.
-      },
-      onFilter: (value, record) => {
-        // "value" here is the selected date range.
-        const [start, end] = (value as any) || [];
-        if (!start || !end) {
-          return true;
-        }
-        const recordDate = record.createdAt?.toDate();
-        if (!recordDate) return false;
-        return recordDate >= start.toDate() && recordDate <= end.toDate();
-      },
     },
   ];
 

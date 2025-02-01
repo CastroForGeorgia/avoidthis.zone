@@ -8,7 +8,7 @@ import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher';
 import { Minimap } from './Minimap';
 import { createRaidReport } from '../../firebase';
 import { Coordinate } from 'ol/coordinate';
-import { fromLonLat, toLonLat } from 'ol/proj';
+import { toLonLat } from 'ol/proj';
 
 interface ReportModalProps {
     clickedCoordinates: [number, number];
@@ -63,7 +63,6 @@ const ReportModal: React.FC<ReportModalProps> = ({
             footer={null}
             destroyOnClose
         >
-            <LanguageSwitcher />
             {clickedCoordinates && (
                 <Minimap
                     coordinates={clickedCoordinates}
