@@ -4,7 +4,7 @@ export default {
             applicationLoadErrorMessage: '加载应用程序时出错',
             applicationLoadErrorDescription:
                 'ID为{{applicationId}}的应用程序未能正确加载。' +
-                '您看到的是默认的应用程序配置。',
+                '您正在查看默认的应用程序配置。',
             errorMessage: '加载应用程序时出错',
             errorDescription:
                 '加载应用程序时发生了意外错误。请尝试重新加载页面。',
@@ -15,15 +15,15 @@ export default {
             noResultsMessage: '未找到结果。请尝试优化您的搜索。',
         },
         SideDrawer: {
-            title: '过滤器',
+            title: '筛选器',
             languageSwitcher: {
                 label: '选择语言'
             },
-            clearAllButton: '清除所有过滤器',
-            applyButton: '应用过滤器',
+            clearAllButton: '清除所有筛选器',
+            applyButton: '应用筛选器',
         },
         ToggleDrawerButton: {
-            tooltip: '显示/隐藏过滤器',
+            tooltip: '显示/隐藏筛选器',
         },
         ReportModal: {
             title: '提交报告',
@@ -35,21 +35,27 @@ export default {
             resetButton: '重置',
             formErrors: {
                 requiredField: '此字段为必填项。',
+                invalidDate: '此日期无效。',
+                invalidUrl: '请输入有效的URL。'
             },
             labels: {
                 tactics: '战术',
+                filters: '详细信息',
                 raidLocationCategory: '突袭地点类别',
                 detailLocation: '详细地点',
-                wasSuccessful: '操作是否成功？',
+                wasSuccessful: '是否有任何人被拘留？',
                 locationReference: '地点参考',
                 sourceOfInfo: '信息来源',
+                dateOfRaid: '(可选) 日期',
+                sourceOfInfoUrl: '来源URL',
+                sourceOfInfoUrlPlaceholder: '输入来源的URL（如适用）'
             },
         },
         Enums: {
             ALLOWED_TACTICS: {
                 SURVEILLANCE: '监视',
                 WARRANTLESS_ENTRY: '无证进入',
-                RUSE: '伪装',
+                RUSE: '诡计',
                 COLLATERAL_ARREST: '附带逮捕',
                 USE_OF_FORCE: '使用武力',
                 CHECKPOINT: '检查站',
@@ -78,6 +84,7 @@ export default {
                 TRAIN_STATION: '火车站',
                 AIRPORT: '机场',
                 OTHER_FACILITY: '其他设施',
+                SCHOOL: '学校'
             },
             ALLOWED_WAS_SUCCESSFUL: {
                 YES: '是',
@@ -97,6 +104,7 @@ export default {
                 PERSONAL_OBSERVATION: '个人观察',
                 COMMUNITY_REPORT: '社区报告',
                 PUBLIC_RECORD: '公共记录',
+                LEGAL_AID_ORG: '组织'
             },
         },
         Common: {
@@ -109,6 +117,11 @@ export default {
             searchPlaceholder: '搜索...',
             confirmButton: '确认',
             cancelButton: '取消',
+            unknown: '未知',
+            createdAt: '创建于',
+            viewOnMap: '在地图上查看',
+            navigate: '在地图上查看',
+            filter: '筛选',
         },
     },
 };

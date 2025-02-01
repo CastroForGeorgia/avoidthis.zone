@@ -1,5 +1,5 @@
 import React, { Key, useContext } from "react";
-import { Table, Spin, Alert, Button, Space, Tag } from "antd";
+import { Table, Spin, Alert, Button, Space, Tag, Popover } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useTranslation } from "react-i18next";
 import { DatePicker } from "antd/lib";
@@ -161,24 +161,20 @@ const RaidReportTable: React.FC = () => {
   // Define table columns with filters based on enumData.
   const columns: ColumnsType<RaidReportFirestoreData> = [
     {
-      title: t("Common.navigate"),
-      key: "navigate",
-      render: (_, record) => (
-        <Button type="link" onClick={() => handleNavigation(record)}>
-          {t("Common.viewOnMap")}
-        </Button>
-      ),
-    },
-    {
       title: t("ReportModal.labels.sourceOfInfo"),
       dataIndex: "sourceOfInfo",
       key: "sourceOfInfo",
       filters: createFilters("ALLOWED_SOURCE_OF_INFO"),
       onFilter: (value, record) => record.sourceOfInfo === (value as string),
-      render: (value: string) => (
-        <Tag color={getTagColor("ALLOWED_SOURCE_OF_INFO", value)} key={value}>
-          {getDisplayValue(value, "Enums.ALLOWED_SOURCE_OF_INFO")}
-        </Tag>
+      render: (value: string, record: RaidReportFirestoreData) => (
+        <Space direction="vertical">
+          <Tag color={getTagColor("ALLOWED_SOURCE_OF_INFO", value)} key={value}>
+            {getDisplayValue(value, "Enums.ALLOWED_SOURCE_OF_INFO")}
+          </Tag>
+          <Button type="link" onClick={() => handleNavigation(record)}>
+            {t("Common.viewOnMap")}
+          </Button>
+        </Space>
       ),
     },
     {
@@ -187,19 +183,41 @@ const RaidReportTable: React.FC = () => {
       key: "tacticsUsed",
       filters: createFilters("ALLOWED_TACTICS"),
       onFilter: (value, record) => record.tacticsUsed.includes(value as string),
-      render: (values: string[]) =>
-        values && values.length ? (
-          // Wrap tags in a Space component to add extra spacing when they wrap.
+      render: (values: string[]) => {
+        if (!values || values.length === 0) {
+          return <Tag color="default">{t("Common.unknown")}</Tag>;
+        }
+        // Show the first 2 tactics inline.
+        const inlineCount = 2;
+        const inlineTactics = values.slice(0, inlineCount);
+        const remainingCount = values.length - inlineCount;
+        const inlineTags = inlineTactics.map((val) => (
+          <Tag color={getTagColor("ALLOWED_TACTICS", val)} key={val}>
+            {t(`Enums.ALLOWED_TACTICS.${val}`)}
+          </Tag>
+        ));
+        return (
           <Space wrap size={[12, 12]}>
-            {values.map((val) => (
-              <Tag color={getTagColor("ALLOWED_TACTICS", val)} key={val}>
-                {t(`Enums.ALLOWED_TACTICS.${val}`)}
-              </Tag>
-            ))}
+            {inlineTags}
+            {remainingCount > 0 && (
+              <Popover
+                content={
+                  <Space direction="vertical" size="small">
+                    {values.slice(inlineCount).map((val) => (
+                      <Tag color={getTagColor("ALLOWED_TACTICS", val)} key={val}>
+                        {t(`Enums.ALLOWED_TACTICS.${val}`)}
+                      </Tag>
+                    ))}
+                  </Space>
+                }
+                title={t("ReportModal.labels.tactics")}
+              >
+                <Tag style={{ cursor: "pointer" }}>+{remainingCount} more</Tag>
+              </Popover>
+            )}
           </Space>
-        ) : (
-          <Tag color="default">{t("Common.unknown")}</Tag>
-        ),
+        );
+      },
     },
     {
       title: t("ReportModal.labels.locationReference"),
@@ -305,7 +323,6 @@ const RaidReportTable: React.FC = () => {
       ),
     },
   ];
-
 
   // Display loading or error states if needed.
   if (loadingEnums || loadingReports) {

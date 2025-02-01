@@ -122,7 +122,6 @@ export default {
             unknown: "Unknown",
             createdAt: "CreatedAt",
             viewOnMap: "View On Map",
-            navigate: "View On Map",
             filter: "Filter",
         },
     },

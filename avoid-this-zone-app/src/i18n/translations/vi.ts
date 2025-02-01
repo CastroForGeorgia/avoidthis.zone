@@ -35,22 +35,28 @@ export default {
             resetButton: 'Đặt lại',
             formErrors: {
                 requiredField: 'Trường này là bắt buộc.',
+                invalidDate: 'Ngày này không hợp lệ.',
+                invalidUrl: 'Vui lòng nhập URL hợp lệ.'
             },
             labels: {
                 tactics: 'Chiến thuật',
+                filters: 'Chi tiết',
                 raidLocationCategory: 'Danh mục địa điểm đột kích',
                 detailLocation: 'Địa điểm chi tiết',
-                wasSuccessful: 'Hoạt động có thành công không?',
+                wasSuccessful: 'Có ai bị giam giữ không?',
                 locationReference: 'Tham chiếu địa điểm',
                 sourceOfInfo: 'Nguồn thông tin',
+                dateOfRaid: '(Tùy chọn) Ngày',
+                sourceOfInfoUrl: 'URL nguồn',
+                sourceOfInfoUrlPlaceholder: 'Nhập URL của nguồn (nếu có)'
             },
         },
         Enums: {
             ALLOWED_TACTICS: {
                 SURVEILLANCE: 'Giám sát',
                 WARRANTLESS_ENTRY: 'Vào mà không có lệnh',
-                RUSE: 'Mẹo',
-                COLLATERAL_ARREST: 'Bắt giữ liên quan',
+                RUSE: 'Mưu kế',
+                COLLATERAL_ARREST: 'Bắt giữ phụ',
                 USE_OF_FORCE: 'Sử dụng vũ lực',
                 CHECKPOINT: 'Trạm kiểm soát',
                 KNOCK_AND_TALK: 'Gõ cửa và nói chuyện',
@@ -70,7 +76,7 @@ export default {
                 CAR_STOP: 'Dừng xe',
                 SHELTER: 'Nơi trú ẩn',
                 PROBATION: 'Văn phòng quản chế',
-                PAROLE: 'Văn phòng tha tù trước thời hạn',
+                PAROLE: 'Văn phòng tha tù',
                 WORKPLACE: 'Nơi làm việc',
                 HOSPITAL_WARD: 'Khoa bệnh viện',
                 IMMIGRATION_CENTER: 'Trung tâm nhập cư',
@@ -78,18 +84,19 @@ export default {
                 TRAIN_STATION: 'Ga tàu',
                 AIRPORT: 'Sân bay',
                 OTHER_FACILITY: 'Cơ sở khác',
+                SCHOOL: 'Trường học'
             },
             ALLOWED_WAS_SUCCESSFUL: {
                 YES: 'Có',
                 NO: 'Không',
-                UNKNOWN: 'Không rõ',
+                UNKNOWN: 'Không xác định',
             },
             ALLOWED_LOCATION_REFERENCE: {
                 INTERSECTION: 'Ngã tư',
-                BUS_STOP: 'Trạm xe buýt',
+                BUS_STOP: 'Điểm dừng xe buýt',
                 TRAIN_STATION: 'Ga tàu',
-                ZIP_CODE: 'Mã bưu chính',
-                LANDMARK: 'Địa danh',
+                ZIP_CODE: 'Mã bưu điện',
+                LANDMARK: 'Điểm mốc',
                 NONE: 'Không có',
             },
             ALLOWED_SOURCE_OF_INFO: {
@@ -97,6 +104,7 @@ export default {
                 PERSONAL_OBSERVATION: 'Quan sát cá nhân',
                 COMMUNITY_REPORT: 'Báo cáo cộng đồng',
                 PUBLIC_RECORD: 'Hồ sơ công',
+                LEGAL_AID_ORG: 'Tổ chức'
             },
         },
         Common: {
@@ -109,6 +117,11 @@ export default {
             searchPlaceholder: 'Tìm kiếm...',
             confirmButton: 'Xác nhận',
             cancelButton: 'Hủy',
+            unknown: 'Không xác định',
+            createdAt: 'Ngày tạo',
+            viewOnMap: 'Xem trên bản đồ',
+            navigate: 'Xem trên bản đồ',
+            filter: 'Lọc',
         },
     },
 };
