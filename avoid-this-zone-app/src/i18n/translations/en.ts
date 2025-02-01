@@ -124,5 +124,6 @@ export default {
             viewOnMap: "View On Map",
             filter: "Filter",
         },
+        disclaimer: "All reports on AvoidThis.Zone are user-submitted and reflect the personal observations and experiences of individual contributors. By using this site and relying on its information, you acknowledge and agree that AvoidThis.Zone is not responsible for the accuracy, reliability, or completeness of any report. Users are encouraged to independently verify the information before taking any action. This technology is developed by CastroForGeorgia as part of our commitment to empowering the working class and exposing the failures of a corrupt system. Your use of this site signifies acceptance of these terms and an understanding that the data presented is provided 'as-is' without any warranty of any kind."
     },
 };

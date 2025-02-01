@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Layout, Drawer, Button, Spin, Result } from 'antd';
 import BasicMapComponent from './components/BasicMapComponent';
-import FiltersDrawer from './components/FiltersDrawer';
+import SettingsDrawer from './components/SettingsDrawer';
 import ResultsPanel from './components/ResultsPanel';
 import './App.less';
 import { Logger } from '@terrestris/base-util';
@@ -185,7 +185,7 @@ export const App: React.FC = (): JSX.Element => {
             open={isDrawerVisible}
             onClose={() => setDrawerVisible(false)}
           >
-            <FiltersDrawer />
+            <SettingsDrawer />
           </Drawer>
         </Layout>
       </AppDataProvider>
