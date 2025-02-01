@@ -18,7 +18,7 @@ import OlSourceOSM from 'ol/source/OSM';
 import OlView from 'ol/View';
 import { defaults as defaultInteractions } from 'ol/interaction';
 import { MapContext } from '@terrestris/react-util';
-import { SettingOutlined } from '@ant-design/icons';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import { signInAnonymouslyIfNeeded } from './firebase';
 import { AppDataProvider } from './providers/AppDataContextProvider';
 import { HeatMapComponent } from './components/HeatMapComponent/HeatMapComponent';
@@ -173,7 +173,7 @@ export const App: React.FC = (): JSX.Element => {
             className="filters-button"
             type="primary"
             shape="circle"
-            icon={<SettingOutlined />}
+            icon={<InfoCircleOutlined />}
             onClick={() => setDrawerVisible(true)}
           />
 

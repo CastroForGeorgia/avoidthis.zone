@@ -123,5 +123,8 @@ export default {
             navigate: '在地图上查看',
             filter: '筛选',
         },
+        communityResources: "社区资源",
+        glaHotline: "GLAHR 热线",
+        disclaimer: "AvoidThis.Zone 上的所有报告均由用户提交，并反映了各个贡献者的个人观察和经验。使用本网站并依赖其信息，即表示您承认并同意 AvoidThis.Zone 不对任何报告的准确性、可靠性或完整性负责。我们鼓励用户在采取任何行动之前自行核实信息。本技术由 CastroForGeorgia 开发，作为我们致力于赋权工人阶级、揭露腐败体系失败的一部分。您使用本网站即表示接受这些条款，并理解所呈现的数据是按“现状”提供的，且不附带任何形式的保证。"
     },
 };

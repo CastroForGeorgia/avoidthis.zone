@@ -123,5 +123,8 @@ export default {
             navigate: "Ver en el mapa",
             filter: "Filtrar",
         },
+        communityResources: "Recursos Comunitarios",
+        glaHotline: "Línea directa de GLAHR",
+        disclaimer: "Todos los informes en AvoidThis.Zone son enviados por los usuarios y reflejan las observaciones y experiencias personales de cada colaborador. Al utilizar este sitio y basarse en su información, usted reconoce y acepta que AvoidThis.Zone no es responsable de la exactitud, confiabilidad ni integridad de ningún informe. Se alienta a los usuarios a verificar de manera independiente la información antes de tomar cualquier acción. Esta tecnología ha sido desarrollada por CastroForGeorgia como parte de nuestro compromiso de empoderar a la clase trabajadora y exponer los fracasos de un sistema corrupto. Su uso de este sitio significa la aceptación de estos términos y la comprensión de que los datos presentados se ofrecen 'tal cual', sin garantía alguna de ningún tipo."
     },
 };

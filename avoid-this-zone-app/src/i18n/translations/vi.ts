@@ -123,5 +123,8 @@ export default {
             navigate: 'Xem trên bản đồ',
             filter: 'Lọc',
         },
+        communityResources: "Tài nguyên cộng đồng",
+        glaHotline: "Đường dây nóng GLAHR",
+        disclaimer: "Tất cả các báo cáo trên AvoidThis.Zone đều được gửi bởi người dùng và phản ánh các quan sát cũng như trải nghiệm cá nhân của từng cộng tác viên. Khi sử dụng trang web này và dựa vào thông tin của nó, bạn xác nhận và đồng ý rằng AvoidThis.Zone không chịu trách nhiệm về độ chính xác, độ tin cậy hay tính đầy đủ của bất kỳ báo cáo nào. Người dùng được khuyến khích tự kiểm tra thông tin một cách độc lập trước khi thực hiện bất kỳ hành động nào. Công nghệ này được CastroForGeorgia phát triển như một phần trong cam kết trao quyền cho giai cấp lao động và phơi bày những thất bại của một hệ thống tham nhũng. Việc sử dụng trang web này đồng nghĩa với việc bạn chấp nhận các điều khoản này và hiểu rằng dữ liệu được trình bày được cung cấp ‘nguyên trạng’ mà không có bất kỳ bảo đảm nào."
     },
 };
