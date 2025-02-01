@@ -1,5 +1,5 @@
 import React, { Key, useContext } from "react";
-import { Table, Spin, Alert, Button, Space } from "antd";
+import { Table, Spin, Alert, Button, Space, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useTranslation } from "react-i18next";
 import { DatePicker } from "antd/lib";
@@ -9,6 +9,7 @@ import { useMap } from "@terrestris/react-util";
 import { fromLonLat } from "ol/proj";
 import { Timestamp } from "firebase/firestore";
 import moment from "moment";
+import { getTagColor } from "./helper";
 
 const { RangePicker } = DatePicker;
 
@@ -174,8 +175,11 @@ const RaidReportTable: React.FC = () => {
       key: "sourceOfInfo",
       filters: createFilters("ALLOWED_SOURCE_OF_INFO"),
       onFilter: (value, record) => record.sourceOfInfo === (value as string),
-      render: (value: string) =>
-        getDisplayValue(value, "Enums.ALLOWED_SOURCE_OF_INFO"),
+      render: (value: string) => (
+        <Tag color={getTagColor("ALLOWED_SOURCE_OF_INFO", value)} key={value}>
+          {getDisplayValue(value, "Enums.ALLOWED_SOURCE_OF_INFO")}
+        </Tag>
+      ),
     },
     {
       title: t("ReportModal.labels.tactics"),
@@ -184,9 +188,18 @@ const RaidReportTable: React.FC = () => {
       filters: createFilters("ALLOWED_TACTICS"),
       onFilter: (value, record) => record.tacticsUsed.includes(value as string),
       render: (values: string[]) =>
-        values && values.length
-          ? values.map((val) => t(`Enums.ALLOWED_TACTICS.${val}`)).join(", ")
-          : t("Common.unknown"),
+        values && values.length ? (
+          // Wrap tags in a Space component to add extra spacing when they wrap.
+          <Space wrap size={[12, 12]}>
+            {values.map((val) => (
+              <Tag color={getTagColor("ALLOWED_TACTICS", val)} key={val}>
+                {t(`Enums.ALLOWED_TACTICS.${val}`)}
+              </Tag>
+            ))}
+          </Space>
+        ) : (
+          <Tag color="default">{t("Common.unknown")}</Tag>
+        ),
     },
     {
       title: t("ReportModal.labels.locationReference"),
@@ -195,8 +208,11 @@ const RaidReportTable: React.FC = () => {
       filters: createFilters("ALLOWED_LOCATION_REFERENCE"),
       onFilter: (value, record) =>
         record.locationReference === (value as string),
-      render: (value: string) =>
-        getDisplayValue(value, "Enums.ALLOWED_LOCATION_REFERENCE"),
+      render: (value: string) => (
+        <Tag color={getTagColor("ALLOWED_LOCATION_REFERENCE", value)} key={value}>
+          {getDisplayValue(value, "Enums.ALLOWED_LOCATION_REFERENCE")}
+        </Tag>
+      ),
     },
     {
       title: t("ReportModal.labels.raidLocationCategory"),
@@ -205,8 +221,11 @@ const RaidReportTable: React.FC = () => {
       filters: createFilters("ALLOWED_RAID_LOCATION_CATEGORY"),
       onFilter: (value, record) =>
         record.raidLocationCategory === (value as string),
-      render: (value: string) =>
-        getDisplayValue(value, "Enums.ALLOWED_RAID_LOCATION_CATEGORY"),
+      render: (value: string) => (
+        <Tag color={getTagColor("ALLOWED_RAID_LOCATION_CATEGORY", value)} key={value}>
+          {getDisplayValue(value, "Enums.ALLOWED_RAID_LOCATION_CATEGORY")}
+        </Tag>
+      ),
     },
     {
       title: t("ReportModal.labels.detailLocation"),
@@ -215,8 +234,11 @@ const RaidReportTable: React.FC = () => {
       filters: createFilters("ALLOWED_DETAIL_LOCATION"),
       onFilter: (value, record) =>
         record.detailLocation === (value as string),
-      render: (value: string) =>
-        getDisplayValue(value, "Enums.ALLOWED_DETAIL_LOCATION"),
+      render: (value: string) => (
+        <Tag color={getTagColor("ALLOWED_DETAIL_LOCATION", value)} key={value}>
+          {getDisplayValue(value, "Enums.ALLOWED_DETAIL_LOCATION")}
+        </Tag>
+      ),
     },
     {
       title: t("ReportModal.labels.wasSuccessful"),
@@ -225,14 +247,21 @@ const RaidReportTable: React.FC = () => {
       filters: createFilters("ALLOWED_WAS_SUCCESSFUL"),
       onFilter: (value, record) =>
         String(record.wasSuccessful) === (value as string),
-      render: (value: string) =>
-        getDisplayValue(value, "Enums.ALLOWED_WAS_SUCCESSFUL"),
+      render: (value: string) => (
+        <Tag color={getTagColor("ALLOWED_WAS_SUCCESSFUL", value)} key={value}>
+          {getDisplayValue(value, "Enums.ALLOWED_WAS_SUCCESSFUL")}
+        </Tag>
+      ),
     },
     {
       title: t("Common.createdAt"),
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (value: any) => formatDateTime(value),
+      render: (value: any) => (
+        <Tag color="default">
+          {formatDateTime(value)}
+        </Tag>
+      ),
       // Custom filter dropdown for date range.
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
         const currentRange = (selectedKeys[0] as any) || [];
@@ -276,6 +305,7 @@ const RaidReportTable: React.FC = () => {
       ),
     },
   ];
+
 
   // Display loading or error states if needed.
   if (loadingEnums || loadingReports) {
