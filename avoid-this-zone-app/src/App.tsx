@@ -21,7 +21,7 @@ import { MapContext } from '@terrestris/react-util';
 import { SettingOutlined } from '@ant-design/icons';
 import { signInAnonymouslyIfNeeded } from './firebase';
 import { AppDataProvider } from './providers/AppDataContextProvider';
-import { HeatMapComponent } from './components/HeatMapComponent/HeatmapComponent';
+import { HeatMapComponent } from './components/HeatMapComponent/HeatMapComponent';
 
 const { Content } = Layout;
 
