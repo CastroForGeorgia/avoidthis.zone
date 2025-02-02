@@ -7,7 +7,7 @@ import { Card, List } from 'antd';
 const communityResources = [
   {
     key: 'glaHotline', // Translation key for the resource title
-    url: 'https://glahr.org/our-work/#Hot-line1',
+    url: 'https://glahr.org/our-work',
   },
   // Add more community resources here as needed.
 ];

@@ -11,7 +11,7 @@ import { fromLonLat } from 'ol/proj';
 import Control from 'ol/control/Control';
 
 import { AimOutlined } from '@ant-design/icons';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 /**
  * FindMeComponent
@@ -62,24 +62,31 @@ const FindMeComponent: React.FC = () => {
         }
     }, [map, tracking, findMeLayer]);
 
-    // Add the locate control to the map using an Ant Design icon.
+    // Add the locate control to the map using an Ant Design icon and React 18's createRoot.
     useEffect(() => {
         if (!map) return;
         const locateControlDiv = document.createElement('div');
         locateControlDiv.className = 'ol-control ol-unselectable locate';
-        // Render our React button into the control container.
-        ReactDOM.render(
+
+        // Use createRoot to render the React element into the control container.
+        const root = createRoot(locateControlDiv);
+        root.render(
             <div onClick={handleLocateClick} style={{ cursor: 'pointer', padding: '5px' }}>
                 <AimOutlined style={{ fontSize: '24px' }} />
-            </div>,
-            locateControlDiv
+            </div>
         );
+
         const locateControl = new Control({
             element: locateControlDiv,
         });
         map.addControl(locateControl);
+
         return () => {
             map.removeControl(locateControl);
+            // Defer the unmount to avoid synchronous unmount issues.
+            setTimeout(() => {
+                root.unmount();
+            }, 0);
         };
     }, [map, handleLocateClick]);
 

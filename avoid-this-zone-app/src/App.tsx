@@ -91,7 +91,7 @@ function setupMap(): OlMap {
     view: new OlView({
       projection: 'EPSG:3857',
       center: fromLonLat([-84.3880, 33.7490]),
-      zoom: 10,
+      zoom: 9,
       minZoom: 8,
       maxZoom: 15,
       extent: georgiaExtent,
