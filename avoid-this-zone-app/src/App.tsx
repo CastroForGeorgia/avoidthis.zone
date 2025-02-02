@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Layout, Drawer, Button, Spin, Result } from 'antd';
 import BasicMapComponent from './components/BasicMapComponent';
 import SettingsDrawer from './components/SettingsDrawer';
-import ResultsPanel from './components/ResultsPanel';
 import './App.less';
 import { Logger } from '@terrestris/base-util';
 import EsriJSON from 'ol/format/EsriJSON';
@@ -22,6 +21,8 @@ import { InfoCircleOutlined } from '@ant-design/icons';
 import { signInAnonymouslyIfNeeded } from './firebase';
 import { AppDataProvider } from './providers/AppDataContextProvider';
 import { HeatMapComponent } from './components/HeatMapComponent/HeatMapComponent';
+import RaidReportTable from './components/RaidReportTable';
+import FindMeComponent from './components/FindMeComponent';
 
 const { Content } = Layout;
 
@@ -97,7 +98,7 @@ function setupMap(): OlMap {
     }),
     interactions,
     layers: [osmLayer, districtLayer],
-    controls: OlControlDefaults({ zoom: true }),
+    controls: OlControlDefaults({ zoom: false }),
   });
 
   return map;
@@ -162,11 +163,12 @@ export const App: React.FC = (): JSX.Element => {
         <Layout className="app-layout">
           <Content className="map-container">
             <BasicMapComponent />
+            <FindMeComponent />
             <HeatMapComponent />
           </Content>
 
           <div className="results-panel">
-            <ResultsPanel />
+            <RaidReportTable />
           </div>
 
           <Button
