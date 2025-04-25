@@ -23,6 +23,7 @@ import { AppDataProvider } from './providers/AppDataContextProvider';
 import { HeatMapComponent } from './components/HeatMapComponent/HeatMapComponent';
 import RaidReportTable from './components/RaidReportTable';
 import FindMeComponent from './components/FindMeComponent';
+import { createClient } from "@supabase/supabase-js";
 
 const { Content } = Layout;
 
@@ -107,10 +108,23 @@ function setupMap(): OlMap {
 export const App: React.FC = (): JSX.Element => {
   const [map, setMap] = useState<OlMap | null>(null);
   const [isDrawerVisible, setDrawerVisible] = useState(false);
+  console.log(process.env.REACT_APP_SUPERBASE_URL)
+  const supabase = createClient(process.env.REACT_APP_SUPERBASE_URL!, process.env.REACT_APP_SUPERBASE_ANON!);
 
   // Loading and error states for the entire app
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [instruments, setInstruments] = useState([]);
+  useEffect(() => {
+    getInstruments();
+  }, []);
+
+  async function getInstruments() {
+    const { data } = await supabase.from("instruments").select();
+    if(data){
+      console.log(data)
+    }
+  }
 
   useEffect(() => {
     const initializeApp = async () => {

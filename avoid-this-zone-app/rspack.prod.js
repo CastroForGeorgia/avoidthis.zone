@@ -29,6 +29,9 @@ module.exports = merge(common, {
       'process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID': JSON.stringify(process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID),
       'process.env.REACT_APP_FIREBASE_APP_ID': JSON.stringify(process.env.REACT_APP_FIREBASE_APP_ID),
       'process.env.REACT_APP_FIREBASE_MEASUREMENT_ID': JSON.stringify(process.env.REACT_APP_FIREBASE_MEASUREMENT_ID),
+      'process.env.REACT_APP_SUPERBASE_URL': JSON.stringify(process.env.REACT_APP_SUPERBASE_URL),
+      'process.env.REACT_APP_SUPERBASE_ANON': JSON.stringify(process.env.REACT_APP_SUPERBASE_ANON),
+
     }),
   ].filter(Boolean),
   output: {
