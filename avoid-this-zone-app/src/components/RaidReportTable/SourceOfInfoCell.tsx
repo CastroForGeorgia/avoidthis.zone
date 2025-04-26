@@ -1,7 +1,7 @@
 // src/components/RaidReportTable/SourceOfInfoCell.tsx
 import React from "react";
 import { Space, Tag, Button } from "antd";
-import { RaidReportFirestoreData } from "../../firebase/firestore";
+import { RaidReportFirestoreData } from "../../backend/firestore";
 import { getTagColor } from "../Helpers";
 
 interface SourceOfInfoCellProps {

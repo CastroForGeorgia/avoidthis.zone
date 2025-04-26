@@ -6,7 +6,7 @@ import { useEnumData } from '../../hooks/useEnumData'; // Adjust the import path
 import { EnumForm } from '../forms/EnumForm';
 import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher';
 import { Minimap } from './Minimap';
-import { createRaidReport } from '../../firebase';
+import { createRaidReport } from '../../backend';
 import { Coordinate } from 'ol/coordinate';
 import { toLonLat } from 'ol/proj';
 

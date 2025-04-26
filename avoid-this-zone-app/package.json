@@ -23,7 +23,7 @@
     "build:analyze": "npm run build -- --analyze",
     "check": "npm run typecheck && npm run lint && npm run test && npm run test:ui",
     "lint": "eslint -c eslint.config.mjs src/",
-    "start": "rspack serve --config rspack.dev.js",
+    "start": "DEBUG_ENV=true rspack serve --config rspack.dev.js",
     "test": "jest --coverage",
     "test:ui": "playwright test",
     "tsc": "tsc -p tsconfig.json",
@@ -37,6 +37,7 @@
     "@fortawesome/fontawesome-free": "^6.7.2",
     "@reduxjs/toolkit": "^2.5.0",
     "@supabase/supabase-js": "^2.49.4",
+    "@tailwindcss/postcss": "^4.1.4",
     "@terrestris/base-util": "^3.0.0",
     "@terrestris/ol-util": "^21.0.0",
     "@terrestris/react-geo": "^26.2.1",
@@ -53,11 +54,14 @@
     "normalize.css": "^8.0.1",
     "ol": "^10.3.1",
     "ol-mapbox-style": "^12.4.0",
+    "postcss": "^8.5.3",
+    "postcss-loader": "^8.1.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-helmet-async": "^2.0.5",
     "react-i18next": "^15.1.4",
-    "react-redux": "^9.2.0"
+    "react-redux": "^9.2.0",
+    "tailwindcss": "^4.1.4"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",

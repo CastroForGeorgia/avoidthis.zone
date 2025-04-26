@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { fetchEnumValues } from '../firebase'; // Ensure this path is correct
+import { fetchEnumValues } from '../backend'; // Ensure this path is correct
 
 export interface EnumData {
     [key: string]: any;

@@ -4,6 +4,6 @@ import {
 
 import type {
   AppDispatch
-} from '../store/store';
+} from '../app/store/store';
 
 export const useAppDispatch = () => useDispatch<AppDispatch>();

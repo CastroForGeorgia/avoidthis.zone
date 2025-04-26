@@ -12,10 +12,10 @@ import VectorSource from 'ol/source/Vector';
 import { Feature } from 'ol';
 import { Point } from 'ol/geom';
 
-import { RaidReportFirestoreData } from '../../firebase/firestore';
+import { RaidReportFirestoreData } from '../../backend/firestore';
 
 import { MapComponentProps } from '@terrestris/react-geo/dist/Map/MapComponent/MapComponent';
-import { AppDataContext } from '../../providers/AppDataContextProvider';
+import { AppDataContext } from '../../app/providers/AppDataContextProvider';
 // ^ Adjust path if you keep a separate data provider
 
 // Example: HeatMapComponent that consumes Firestore data and an OL map

@@ -8,7 +8,7 @@ import {
   QuerySnapshot,
   where,
 } from "firebase/firestore";
-import { db, fetchEnumValues, RaidReportFirestoreData } from "../firebase/firestore";
+import { db, fetchEnumValues, RaidReportFirestoreData } from "../../backend/firestore";
 import { useTranslation } from "react-i18next";
 
 // Define a filter type for report queries

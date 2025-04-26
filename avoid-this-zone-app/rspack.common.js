@@ -1,11 +1,16 @@
 const path = require('path');
 
 const rspack = require('@rspack/core');
+const { DefinePlugin } = require('@rspack/core');
 
 module.exports = {
-  entry: './src/index.tsx',
+  entry: './src/app/index.tsx',
   module: {
     rules: [{
+      test: /\.css$/,
+      use: ["postcss-loader"],
+      type: "css",
+    }, {
       test: /\.m?js/,
       type: 'javascript/auto',
       resolve: {
@@ -91,7 +96,7 @@ module.exports = {
       meta: {
         viewport: 'user-scalable=no, width=device-width, initial-scale=1, shrink-to-fit=no'
       }
-    })
+    }),
   ],
   experiments: {
     css: true

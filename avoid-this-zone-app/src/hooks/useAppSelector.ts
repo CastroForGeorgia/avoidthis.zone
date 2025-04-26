@@ -5,6 +5,6 @@ import {
 
 import type {
   RootState
-} from '../store/store';
+} from '../app/store/store';
 
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;

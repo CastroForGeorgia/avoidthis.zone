@@ -24,7 +24,7 @@ import {
 } from '../../hooks/useAppSelector';
 import {
   toggleVisibility
-} from '../../store/drawer';
+} from '../../app/store/drawer';
 
 export const ToggleDrawerButton: React.FC<Partial<ToggleButtonProps>> = ({
   ...passThroughProps
