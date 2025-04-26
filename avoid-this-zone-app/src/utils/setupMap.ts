@@ -130,6 +130,7 @@ export default function setupMap(): OlMap {
     view,
     layers: [osmLayer, districtLayer],
     interactions: defaultInteractions(),
-    controls: OlControlDefaults({ zoom: false })
+    controls: OlControlDefaults({ zoom: false }),
+    target: "map"
   });
 }

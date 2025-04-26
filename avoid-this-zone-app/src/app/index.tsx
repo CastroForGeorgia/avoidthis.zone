@@ -7,14 +7,14 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { Provider as ReduxProvider } from 'react-redux';
 
 import App from './App';            // Adjust path if you relocate App.tsx
-import { store } from './store/store';    // Central Redux store
 import '../styles/global.css';      // Tailwind layers
 import '../i18n';            // i18next initialisation
+import { AppDataProvider } from './providers/AppDataContextProvider';
+import './index.less';
 
-const container = document.getElementById('app') as HTMLElement;
+const container = document.getElementById('root') as HTMLElement;
 
 if (!container) {
   throw new Error('Root container #root not found – check public/index.html');
@@ -22,8 +22,8 @@ if (!container) {
 
 ReactDOM.createRoot(container).render(
   <React.StrictMode>
-    <ReduxProvider store={store}>
+    <AppDataProvider>
       <App />
-    </ReduxProvider>
+    </AppDataProvider>
   </React.StrictMode>
 );

@@ -3,7 +3,7 @@ import React, { useContext } from "react";
 import { Table, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useTranslation } from "react-i18next";
-import { AppDataContext, ReportQueryFilter } from "../../app/providers/AppDataContextProvider";
+import { AppDataContextProvider, ReportQueryFilter } from "../../app/providers/AppDataContextProvider";
 import { RaidReportFirestoreData } from "../../backend/firestore";
 import { useMap } from "@terrestris/react-util";
 import { fromLonLat } from "ol/proj";
@@ -23,7 +23,7 @@ const RaidReportTable: React.FC = () => {
         loadingEnums,
         enumError,
         setReportQueryFilters,
-    } = useContext(AppDataContext);
+    } = useContext(AppDataContextProvider);
 
     const { t } = useTranslation();
     const map = useMap();

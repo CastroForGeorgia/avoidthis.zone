@@ -23,14 +23,9 @@ const App: React.FC = () => {
   /* ---------------- Normal Layout ---------------- */
   return (
     <MapContext.Provider value={map}>
-      <div className="relative flex h-screen w-screen overflow-hidden">
+      <div>
         {/* Map & overlays */}
         <MapView />
-
-        {/* Results side panel (desktop) */}
-        <div className="hidden w-80 shrink-0 border-l border-gray-200 bg-white lg:block">
-          <RaidReportTable />
-        </div>
 
       </div>
     </MapContext.Provider>

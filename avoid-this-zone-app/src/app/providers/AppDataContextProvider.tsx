@@ -1,4 +1,18 @@
-import React, { createContext, useState, useEffect, ReactNode } from "react";
+/**
+ * AppDataContextProvider.tsx
+ * ---------------------------------------------------------------------------
+ * Central context for raid reports, enum metadata, query filters, and
+ * heat‑map coordinates. Components can subscribe via `useContext(AppDataContext)`.
+ */
+
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  ReactNode,
+  Dispatch,
+  SetStateAction
+} from 'react';
 import {
   collection,
   DocumentData,
@@ -6,73 +20,117 @@ import {
   orderBy,
   query,
   QuerySnapshot,
-  where,
-} from "firebase/firestore";
-import { db, fetchEnumValues, RaidReportFirestoreData } from "../../backend/firestore";
-import { useTranslation } from "react-i18next";
+  where
+} from 'firebase/firestore';
+import {
+  db,
+  fetchEnumValues,
+  RaidReportFirestoreData
+} from '../../backend/firestore';
+import { useTranslation } from 'react-i18next';
 
-// Define a filter type for report queries
+/* -------------------------------------------------------------------------
+   Types
+---------------------------------------------------------------------------*/
+
 export interface ReportQueryFilter {
   field: string;
-  operator: "==" | "<" | ">" | "<=" | ">=" | "array-contains";
+  operator: '==' | '<' | '>' | '<=' | '>=' | 'array-contains';
   value: any;
 }
 
+/** Simple point for the OL heat‑map layer */
+export interface HeatMapPoint {
+  lon: number;
+  lat: number;
+  weight?: number;
+}
+
 interface AppDataContextProps {
+  /* Raid reports */
   reports: RaidReportFirestoreData[];
   loadingReports: boolean;
   reportsError: string | null;
+
+  /* Enumerated option metadata (e.g. form selects) */
   enumData: Record<string, string[]>;
   loadingEnums: boolean;
   enumError: string | null;
-  // Now include the filters in the context so all components can access them.
+
+  /* Dynamic Firestore filters for raidReports */
   reportQueryFilters: ReportQueryFilter[];
-  setReportQueryFilters: React.Dispatch<React.SetStateAction<ReportQueryFilter[]>>;
+  setReportQueryFilters: Dispatch<SetStateAction<ReportQueryFilter[]>>;
+
+  /* Heat‑map points shared across the app */
+  heatMapPoints: HeatMapPoint[];
+  setHeatMapPoints: Dispatch<SetStateAction<HeatMapPoint[]>>;
+  addHeatMapPoint: (pt: HeatMapPoint) => void;
+  clearHeatMapPoints: () => void;
 }
 
-export const AppDataContext = createContext<AppDataContextProps>({
+/* -------------------------------------------------------------------------
+   Context + default values
+---------------------------------------------------------------------------*/
+export const AppDataContextProvider = createContext<AppDataContextProps>({
   reports: [],
   loadingReports: true,
   reportsError: null,
+
   enumData: {},
   loadingEnums: true,
   enumError: null,
+
   reportQueryFilters: [],
   setReportQueryFilters: () => {},
+
+  heatMapPoints: [],
+  setHeatMapPoints: () => {},
+  addHeatMapPoint: () => {},
+  clearHeatMapPoints: () => {}
 });
 
 interface AppDataProviderProps {
   children: ReactNode;
 }
 
+/* -------------------------------------------------------------------------
+   Provider
+---------------------------------------------------------------------------*/
 export const AppDataProvider: React.FC<AppDataProviderProps> = ({
-  children,
+  children
 }) => {
+  /* ----- Raid reports ----- */
   const [reports, setReports] = useState<RaidReportFirestoreData[]>([]);
   const [loadingReports, setLoadingReports] = useState(true);
   const [reportsError, setReportsError] = useState<string | null>(null);
 
+  /* ----- Enum metadata ----- */
   const [enumData, setEnumData] = useState<Record<string, string[]>>({});
   const [loadingEnums, setLoadingEnums] = useState(true);
   const [enumError, setEnumError] = useState<string | null>(null);
 
-  // Manage the query filters in state.
-  const [reportQueryFilters, setReportQueryFilters] = useState<ReportQueryFilter[]>(
-    []
-  );
+  /* ----- Firestore query filters ----- */
+  const [reportQueryFilters, setReportQueryFilters] = useState<
+    ReportQueryFilter[]
+  >([]);
+
+  /* ----- Heat‑map state ----- */
+  const [heatMapPoints, setHeatMapPoints] = useState<HeatMapPoint[]>([]);
+  const addHeatMapPoint = (pt: HeatMapPoint) =>
+    setHeatMapPoints((prev) => [...prev, pt]);
+  const clearHeatMapPoints = () => setHeatMapPoints([]);
 
   const { t } = useTranslation();
 
-  // A) Load Reports with dynamic filters
+  /* -----------------------------------------------------------------------
+     A) Live raidReports listener (honours dynamic filters)
+  ------------------------------------------------------------------------*/
   useEffect(() => {
-    const raidReportsCollection = collection(db, "raidReports");
+    const raidReportsCollection = collection(db, 'raidReports');
 
-    // Build query constraints: order by createdAt and apply dynamic filters.
     const queryConstraints = [
-      orderBy("createdAt", "desc"),
-      ...reportQueryFilters.map((filter) =>
-        where(filter.field, filter.operator, filter.value)
-      ),
+      orderBy('createdAt', 'desc'),
+      ...reportQueryFilters.map((f) => where(f.field, f.operator, f.value))
     ];
 
     const reportsQuery = query(raidReportsCollection, ...queryConstraints);
@@ -80,61 +138,69 @@ export const AppDataProvider: React.FC<AppDataProviderProps> = ({
     const unsubscribe = onSnapshot(
       reportsQuery,
       (snapshot: QuerySnapshot<DocumentData>) => {
-        const fetchedReports: RaidReportFirestoreData[] = [];
+        const fetched: RaidReportFirestoreData[] = [];
         snapshot.forEach((doc) => {
           const data = doc.data() as RaidReportFirestoreData;
-          fetchedReports.push({ ...data, id: doc.id });
+          fetched.push({ ...data, id: doc.id });
         });
-        setReports(fetchedReports);
+        setReports(fetched);
         setLoadingReports(false);
       },
       (err) => {
-        console.error("Error fetching raid reports:", err);
-        setReportsError(t("Common.errorOccurred"));
+        console.error('Error fetching raid reports:', err);
+        setReportsError(t('Common.errorOccurred'));
         setLoadingReports(false);
       }
     );
 
-    // Use JSON.stringify to ensure the effect only runs when the actual filter values change.
     return () => unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [t, JSON.stringify(reportQueryFilters)]);
 
-  // B) Load Enums
+  /* -----------------------------------------------------------------------
+     B) Enum metadata
+  ------------------------------------------------------------------------*/
   useEffect(() => {
-    const loadEnums = async () => {
+    (async () => {
       setLoadingEnums(true);
       try {
         const data = await fetchEnumValues();
         if (!data) {
-          setEnumError(t("SideDrawer.errorMessages.failedToLoadData"));
+          setEnumError(t('SideDrawer.errorMessages.failedToLoadData'));
         } else {
           setEnumData(data);
         }
-      } catch (error) {
-        console.error("Error fetching enums:", error);
-        setEnumError(t("SideDrawer.errorMessages.genericError"));
+      } catch (err) {
+        console.error('Error fetching enums:', err);
+        setEnumError(t('SideDrawer.errorMessages.genericError'));
       } finally {
         setLoadingEnums(false);
       }
-    };
-    loadEnums();
+    })();
   }, [t]);
 
-  // C) Provide everything through context—including our filter state—to ensure a unified, transparent system.
+  /* -----------------------------------------------------------------------
+     Compose context value
+  ------------------------------------------------------------------------*/
   const value: AppDataContextProps = {
     reports,
     loadingReports,
     reportsError,
+
     enumData,
     loadingEnums,
     enumError,
+
     reportQueryFilters,
     setReportQueryFilters,
+
+    heatMapPoints,
+    setHeatMapPoints,
+    addHeatMapPoint,
+    clearHeatMapPoints
   };
 
   return (
-    <AppDataContext.Provider value={value}>
-      {children}
-    </AppDataContext.Provider>
+    <AppDataContextProvider.Provider value={value}>{children}</AppDataContextProvider.Provider>
   );
 };

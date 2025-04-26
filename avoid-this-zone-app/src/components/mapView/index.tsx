@@ -5,7 +5,7 @@ import { HeatMapComponent } from "../HeatMapComponent/HeatMapComponent";
 
 export const MapView: React.FC = () => {
   return (
-    <div className="relative flex flex-1">
+    <div>
       <BasicMapComponent />
       <FindMeComponent />
       <HeatMapComponent />
