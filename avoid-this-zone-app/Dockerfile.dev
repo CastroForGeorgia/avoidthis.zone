@@ -1,7 +1,18 @@
 FROM node:20-alpine
 
+# Install common tools needed by VS Code Server and dev tooling
+RUN apk add --no-cache \
+  git \
+  bash \
+  curl \
+  openssh-client \
+  ca-certificates \
+  libc6-compat && \
+  update-ca-certificates
+
 WORKDIR /app
 
 EXPOSE 8080
 
-ENTRYPOINT ["npm", "run", "start"]
+# Default command for non-devcontainer runs; devcontainer overrides this
+CMD ["npm", "run", "start"]

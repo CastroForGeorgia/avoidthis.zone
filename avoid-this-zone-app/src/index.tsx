@@ -1,60 +1,70 @@
 // src/index.ts
 
-import React, { } from 'react';
-import ConfigProvider from 'antd/lib/config-provider';
-import enUS from 'antd/lib/locale/en_US';
+import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { Provider as ReduxProvider } from 'react-redux';
-import Logger from '@terrestris/base-util/dist/Logger';
-import App from './App';
-import i18n from './i18n';
-import { store } from './store/store';
-import './index.less';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
+import './index.less';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import { AppDataProvider } from './providers/AppDataContextProvider';
 
-const AppLoader = () => {
+const UnderConstruction = () => {
   return (
-    <React.StrictMode>
-      <HelmetProvider>
-        <ConfigProvider locale={enUS}>
-          <ReduxProvider store={store}>
-            <Helmet>
-              <html lang={i18n.language} />
-              <title>Avoid This Zone - ICE Activity Tracker for Georgia</title>
-              <meta name="description" content="Stay informed with 'Avoid This Zone,' an interactive map tracking ICE activity and providing safety alerts across Georgia. Protect your community today." />
-              <meta name="keywords" content="Georgia ICE tracker, ICE activity map, avoid ICE zones, community safety, Georgia heatmap, local immigration alerts, interactive map, OpenLayers, React" />
-              <meta name="author" content="Andres Castro" />
-              <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-              <meta property="og:title" content="Avoid This Zone - ICE Activity Tracker for Georgia" />
-              <meta property="og:description" content="Explore ICE activity and safety zones on an interactive map tailored for Georgia residents. Stay safe and protect your community." />
-              <meta property="og:image" content="path/to/your/optimized-image.png" />
-              <meta property="og:image:alt" content="Screenshot of the Avoid This Zone map highlighting ICE activity areas in Georgia." />
-              <meta property="og:type" content="website" />
-              <meta property="og:url" content="https://avoidthis.zone" />
-              <link rel="canonical" href="https://avoidthis.zone" />
-            </Helmet>
-            <App />
-          </ReduxProvider>
-        </ConfigProvider>
-      </HelmetProvider>
-    </React.StrictMode>
+    <div
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center',
+        padding: 24,
+        background: 'linear-gradient(135deg, #0f172a, #1e293b)',
+        color: '#ffffff'
+      }}
+    >
+      <div>
+        <div style={{ fontSize: 48, marginBottom: 16 }} aria-hidden="true">
+          <i className="fas fa-user-shield" />
+        </div>
+        <h1 style={{ margin: 0 }}>Avoid This Zone</h1>
+        <p style={{ opacity: 0.9, marginTop: 8, fontSize: 18 }}>
+          We’re rebuilding with stronger anonymity and privacy.
+        </p>
+        <p style={{ opacity: 0.8, marginTop: 0 }}>
+          Thank you for your patience. Please check back soon.
+        </p>
+      </div>
+    </div>
   );
 };
 
-// ----------------------------------
-// 2) The main render function
-// ----------------------------------
-function renderApp() {
-  const container = document.getElementById('app');
-  if (!container) {
-    Logger.error('Could not find container element with ID "app"');
-    return;
-  }
+const pageTitle = 'Avoid This Zone — Under Construction';
+const pageDescription = 'We’re rebuilding Avoid This Zone with stronger anonymity and privacy. Please check back soon.';
 
+const container = document.getElementById('app');
+if (!container) {
+  // eslint-disable-next-line no-console
+  console.error('Could not find container element with ID "app"');
+} else {
   const root = createRoot(container);
-  root.render(<AppLoader />);
+  root.render(
+    <React.StrictMode>
+      <HelmetProvider>
+        <Helmet>
+          <html lang="en" />
+          <title>{pageTitle}</title>
+          <meta name="description" content={pageDescription} />
+          <meta name="keywords" content="Georgia ICE tracker, privacy, safety, community, React" />
+          <meta name="author" content="Andres Castro" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <meta property="og:title" content={pageTitle} />
+          <meta property="og:description" content={pageDescription} />
+          <meta property="og:image" content="path/to/your/optimized-image.png" />
+          <meta property="og:image:alt" content="Avoid This Zone under construction." />
+          <meta property="og:type" content="website" />
+          <meta property="og:url" content="https://avoidthis.zone" />
+          <link rel="canonical" href="https://avoidthis.zone" />
+        </Helmet>
+        <UnderConstruction />
+      </HelmetProvider>
+    </React.StrictMode>
+  );
 }
-
-renderApp();
