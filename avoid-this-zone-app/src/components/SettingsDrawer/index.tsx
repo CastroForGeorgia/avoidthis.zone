@@ -9,6 +9,10 @@ const communityResources = [
     key: 'glaHotline', // Translation key for the resource title
     url: 'https://glahr.org/our-work',
   },
+  {
+    key: 'immigrantdefenseproject', // Translation key for the resource title
+    url: 'https://www.immigrantdefenseproject.org/criminal-immigration-helpline/',
+  },
   // Add more community resources here as needed.
 ];
 
